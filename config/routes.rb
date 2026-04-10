@@ -1,4 +1,19 @@
 Rails.application.routes.draw do
+  get "onboarding/show"
+  get "onboarding/update"
+  get "chat_messages/index"
+  get "chat_messages/create"
+  get "conflicts/index"
+  get "routines/index"
+  get "routines/show"
+  get "routines/generate"
+  get "user_products/create"
+  get "user_products/destroy"
+  get "products/index"
+  get "products/show"
+  get "products/new"
+  get "products/create"
+  get "dashboard/index"
   devise_for :users
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
@@ -12,4 +27,18 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+  devise_for :users
+
+  root "dashboard#index"
+
+  resources :products, only: [:index, :show, :new, :create]
+  resources :user_products, only: [:create, :destroy]
+  resources :routines, only: [:index, :show] do
+    member { post :generate }
+  end
+  resources :conflicts, only: [:index]
+  resources :chat_messages, only: [:index, :create]
+
+  get "/onboarding", to: "onboarding#show"
+  patch "/onboarding", to: "onboarding#update"
 end
