@@ -9,13 +9,15 @@
         dans ta collection
       </p>
     </div>
-    <%= link_to "← Dashboard", root_path, class: "btn-glow btn-glow--outline btn-glow--sm" %>
+    <%= link_to root_path, class: "btn-glow btn-glow--outline btn-glow--sm" do %>
+      <i class="fa-solid fa-arrow-left"></i> Dashboard
+    <% end %>
   </div>
 
   <% if @conflict_count == 0 %>
     <div class="glow-card">
       <div class="empty-state py-8">
-        <span class="empty-state__icon">✅</span>
+        <span class="empty-state__icon"><i class="fa-solid fa-circle-check"></i></span>
         <p class="empty-state__title">Aucun conflit détecté !</p>
         <p class="empty-state__sub">Tes produits sont parfaitement compatibles entre eux.</p>
         <%= link_to "Voir ma collection", products_path, class: "btn-glow btn-glow--primary btn-glow--sm" %>
@@ -24,9 +26,9 @@
 
   <% else %>
     <% severity_config = {
-      "high"   => { icon: "🔴", label: "Conflits sérieux",       desc: "Ces combinaisons peuvent irriter ou endommager ta peau." },
-      "medium" => { icon: "🟡", label: "Interactions modérées",  desc: "Ces combinaisons réduisent l'efficacité ou peuvent légèrement irriter." },
-      "low"    => { icon: "🟢", label: "Interactions mineures",  desc: "Ces combinaisons sont sûres mais peuvent être optimisées." }
+      "high"   => { icon: "fa-circle-exclamation", label: "Conflits sérieux",      desc: "Ces combinaisons peuvent irriter ou endommager ta peau." },
+      "medium" => { icon: "fa-triangle-exclamation", label: "Interactions modérées", desc: "Ces combinaisons réduisent l'efficacité ou peuvent légèrement irriter." },
+      "low"    => { icon: "fa-circle-info",          label: "Interactions mineures", desc: "Ces combinaisons sont sûres mais peuvent être optimisées." }
     } %>
 
     <div class="flex flex-col gap-6">
@@ -36,10 +38,10 @@
 
         <section>
           <div class="flex items-center gap-3 mb-3">
-            <span style="font-size:1.1rem"><%= cfg[:icon] %></span>
+            <span style="font-size:1.1rem"><i class="fa-solid <%= cfg[:icon] %>"></i></span>
             <div>
               <% badge_class = { "high" => "conflict-count-badge conflict-count-badge--high", "medium" => "conflict-count-badge conflict-count-badge--medium", "low" => "conflict-count-badge conflict-count-badge--low" }[severity] %>
-              <h2 style="font-family:'Playfair Display',serif; font-size:1rem; margin:0">
+              <h2 style="font-family:'DM Serif Display',serif; font-size:1rem; margin:0">
                 <%= cfg[:label] %>
                 <span class="<%= badge_class %>"><%= @conflicts_by_severity[severity].count %></span>
               </h2>
@@ -53,24 +55,27 @@
               <div class="<%= card_class %>">
                 <div class="conflict-card__products">
                   <span class="conflict-card__product">
-                    🧴 <%= conflict[:user_product_a].product.name %>
+                    <i class="fa-solid fa-bottle-droplet"></i>
+                    <%= conflict[:user_product_a].product.name %>
                     <em class="text-muted text-xs">(<%= conflict[:ingredient_a].name %>)</em>
                   </span>
-                  <span class="conflict-card__separator">✕</span>
+                  <span class="conflict-card__separator"><i class="fa-solid fa-xmark"></i></span>
                   <span class="conflict-card__product">
-                    🧴 <%= conflict[:user_product_b].product.name %>
+                    <i class="fa-solid fa-bottle-droplet"></i>
+                    <%= conflict[:user_product_b].product.name %>
                     <em class="text-muted text-xs">(<%= conflict[:ingredient_b].name %>)</em>
                   </span>
                 </div>
                 <p class="conflict-card__message"><%= conflict[:message] %></p>
                 <div class="conflict-card__recommendation">
-                  <span>💡</span>
+                  <i class="fa-solid fa-lightbulb"></i>
                   <span><%= conflict[:recommendation] %></span>
                 </div>
                 <div class="mt-3">
-                  <%= link_to "Demander à l'IA →",
-                        chat_messages_path(q: "#{conflict[:ingredient_a].name} + #{conflict[:ingredient_b].name} : que faire ?"),
-                        class: "btn-glow btn-glow--outline btn-glow--sm" %>
+                  <%= link_to chat_messages_path(q: "#{conflict[:ingredient_a].name} + #{conflict[:ingredient_b].name} : que faire ?"),
+                        class: "btn-glow btn-glow--outline btn-glow--sm" do %>
+                    Demander à l'IA <i class="fa-solid fa-arrow-right"></i>
+                  <% end %>
                 </div>
               </div>
             <% end %>

@@ -6,7 +6,9 @@
 
     <% if @messages.empty? %>
       <div class="chat-welcome">
-        <span style="font-size:2.8rem; display:block; margin-bottom:.75rem">✨</span>
+        <span style="font-size:2.8rem; display:block; margin-bottom:.75rem">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+        </span>
         <p class="chat-welcome__title">Ton assistante skincare</p>
         <p class="text-muted text-sm">Pose-moi une question sur tes produits, les interactions ou ta routine.</p>
         <div class="chat-suggestions">
@@ -28,7 +30,13 @@
       <% @messages.each do |msg| %>
         <% msg_class = msg.role == "user" ? "chat-message chat-message--user" : "chat-message chat-message--assistant" %>
         <div class="<%= msg_class %>">
-          <div class="chat-message__avatar"><%= msg.role == "user" ? "👤" : "✨" %></div>
+          <div class="chat-message__avatar">
+            <% if msg.role == "user" %>
+              <i class="fa-solid fa-user"></i>
+            <% else %>
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <% end %>
+          </div>
           <div class="chat-message__bubble"><%= msg.content %></div>
         </div>
       <% end %>
@@ -50,7 +58,9 @@
       rows="1"
       class="chat-input"
     ></textarea>
-    <button type="submit" data-chat-target="submit" class="chat-submit">↑</button>
+    <button type="submit" data-chat-target="submit" class="chat-submit">
+      <i class="fa-solid fa-paper-plane"></i>
+    </button>
   </form>
 
 </div>

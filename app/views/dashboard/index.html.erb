@@ -1,149 +1,224 @@
 <%# app/views/dashboard/index.html.erb %>
-<div class="container" style="max-width: 860px">
 
-  <%# ── Hero ── %>
-  <div class="dash-hero">
-    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
-      <div>
-        <p class="dash-hero__greeting">
-          Bonjour, <%= current_user.email.split("@").first.capitalize %> ✨
-        </p>
-        <p class="dash-hero__sub">
-          Voici un aperçu de ta routine beauté du jour.
-        </p>
-        <div class="dash-hero__badge">
-          🌿 Peau <%= current_user.skin_type&.humanize || "non renseignée" %> &nbsp;·&nbsp;
+<%# ══════════════════════════════════════════
+    HERO
+══════════════════════════════════════════ %>
+<section class="db-hero">
+  <div class="db-hero__bg"></div>
+  <div class="db-hero__content container">
+    <div class="db-hero__left">
+      <p class="db-hero__eyebrow">Bonjour, <%= current_user.email.split("@").first.capitalize %></p>
+      <h1 class="db-hero__title">Ta peau mérite<br>le meilleur soin.</h1>
+      <div class="db-hero__meta">
+        <span class="db-meta-chip db-meta-chip--skin">
+          <i class="fa-solid fa-leaf"></i>
+          Peau <%= current_user.skin_type&.humanize || "non renseignée" %>
+        </span>
+        <span class="db-meta-chip">
+          <i class="fa-solid fa-bottle-droplet"></i>
           <%= @user_products.count %> produit<%= "s" if @user_products.count != 1 %>
-        </div>
+        </span>
+        <% high_count = @conflicts.count { |c| c[:severity] == "high" } %>
+        <% if high_count > 0 %>
+          <span class="db-meta-chip db-meta-chip--alert">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <%= high_count %> conflit<%= "s" if high_count > 1 %>
+          </span>
+        <% end %>
       </div>
-      <%= link_to "＋ Ajouter un produit", new_product_path, class: "btn-glow btn-glow--primary btn-glow--sm align-self-start" %>
+    </div>
+    <div class="db-hero__actions">
+      <%= link_to new_product_path, class: "db-cta-btn" do %>
+        <i class="fa-solid fa-plus"></i>
+        Ajouter un produit
+      <% end %>
     </div>
   </div>
 
-  <%# ── Alertes conflits ── %>
-  <% if @conflicts.any? %>
-    <div class="mb-4">
-      <% high = @conflicts.select { |c| c[:severity] == "high" } %>
+  <%# Stats strip %>
+  <div class="db-stats container">
+    <div class="db-stat">
+      <span class="db-stat__value"><%= @user_products.count %></span>
+      <span class="db-stat__label">Produits</span>
+    </div>
+    <div class="db-stat__divider"></div>
+    <div class="db-stat">
+      <span class="db-stat__value"><%= @conflicts.count %></span>
+      <span class="db-stat__label">Interactions</span>
+    </div>
+    <div class="db-stat__divider"></div>
+    <div class="db-stat">
+      <% routines_count = [@morning_routine, @evening_routine].compact.count %>
+      <span class="db-stat__value"><%= routines_count %>/2</span>
+      <span class="db-stat__label">Routines actives</span>
+    </div>
+    <div class="db-stat__divider"></div>
+    <div class="db-stat">
+      <span class="db-stat__value"><%= current_user.chat_messages.count %></span>
+      <span class="db-stat__label">Conseils IA</span>
+    </div>
+  </div>
+</section>
+
+<div class="container db-body">
+
+  <%# ══════════════════════════════════════════
+      ALERTES CONFLITS
+  ══════════════════════════════════════════ %>
+  <% high = @conflicts.select { |c| c[:severity] == "high" } %>
+  <% medium = @conflicts.select { |c| c[:severity] == "medium" } %>
+  <% if high.any? || medium.any? %>
+    <div class="db-alerts">
       <% if high.any? %>
-        <div class="glow-alert glow-alert--danger">
-          <span class="glow-alert__icon">🔴</span>
-          <div>
-            <strong><%= high.count %> conflit<%= "s" if high.count > 1 %> sérieux</strong>
-            dans ta collection.
-            <%= link_to "Voir l'analyse →", conflicts_path, class: "glow-alert__link ms-1" %>
+        <div class="db-alert db-alert--danger">
+          <div class="db-alert__icon"><i class="fa-solid fa-circle-exclamation"></i></div>
+          <div class="db-alert__body">
+            <strong><%= high.count %> conflit<%= "s" if high.count > 1 %> sérieux</strong> détecté<%= "s" if high.count > 1 %> dans ta collection
           </div>
+          <%= link_to conflicts_path, class: "db-alert__cta" do %>Analyser <i class="fa-solid fa-arrow-right"></i><% end %>
         </div>
       <% end %>
-      <% medium = @conflicts.select { |c| c[:severity] == "medium" } %>
       <% if medium.any? %>
-        <div class="glow-alert glow-alert--warning">
-          <span class="glow-alert__icon">⚡</span>
-          <div>
-            <strong><%= medium.count %> interaction<%= "s" if medium.count > 1 %> modérée<%= "s" if medium.count > 1 %></strong>
-            à surveiller.
-            <%= link_to "Voir l'analyse →", conflicts_path, class: "glow-alert__link ms-1" %>
+        <div class="db-alert db-alert--warning">
+          <div class="db-alert__icon"><i class="fa-solid fa-bolt"></i></div>
+          <div class="db-alert__body">
+            <strong><%= medium.count %> interaction<%= "s" if medium.count > 1 %> modérée<%= "s" if medium.count > 1 %></strong> à surveiller
           </div>
+          <%= link_to conflicts_path, class: "db-alert__cta" do %>Voir <i class="fa-solid fa-arrow-right"></i><% end %>
         </div>
       <% end %>
     </div>
   <% end %>
 
-  <%# ── Routines ── %>
-  <div class="grid grid-2-auto mb-4">
-    <% { "morning" => ["☀️", "Routine matin", @morning_routine], "evening" => ["🌙", "Routine soir", @evening_routine] }.each do |period, (icon, label, routine)| %>
-      <div>
-        <div class="routine-card">
-          <div class="routine-card__header">
-            <span class="routine-card__label"><%= icon %> <%= label %></span>
-            <% if routine %>
-              <span class="routine-card__age"><%= time_ago_in_words(routine.generated_at) %></span>
+  <%# ══════════════════════════════════════════
+      ROUTINES
+  ══════════════════════════════════════════ %>
+  <div class="db-section">
+    <div class="db-section__header">
+      <h2 class="db-section__title">Mes routines</h2>
+      <%= link_to routines_path, class: "db-section__link" do %>Voir tout <i class="fa-solid fa-arrow-right"></i><% end %>
+    </div>
+    <div class="db-routines">
+      <% [
+        { period: "morning", icon: "fa-sun",  label: "Routine matin", routine: @morning_routine, gradient: "db-routine-card--morning" },
+        { period: "evening", icon: "fa-moon", label: "Routine soir",  routine: @evening_routine, gradient: "db-routine-card--evening" }
+      ].each do |r| %>
+        <div class="db-routine-card <%= r[:gradient] %>">
+          <div class="db-routine-card__header">
+            <div>
+              <span class="db-routine-card__icon"><i class="fa-solid <%= r[:icon] %>"></i></span>
+              <span class="db-routine-card__label"><%= r[:label] %></span>
+            </div>
+            <% if r[:routine] %>
+              <span class="db-routine-card__age"><%= time_ago_in_words(r[:routine].generated_at) %></span>
             <% end %>
           </div>
-          <div class="routine-card__body">
-            <% if routine&.routine_steps&.any? %>
-              <ol class="routine-steps">
-                <% routine.routine_steps.includes(user_product: :product).order(:order).each do |step| %>
-                  <li class="routine-step">
-                    <span class="routine-step__num"><%= step.order %></span>
-                    <div class="routine-step__content">
-                      <div class="routine-step__name"><%= step.user_product.product.name %></div>
-                      <div class="routine-step__tip"><%= step.instruction %></div>
-                    </div>
-                  </li>
-                <% end %>
-              </ol>
-              <% if routine.ai_summary.present? %>
-                <div class="routine-summary">
-                  <span>💡</span>
-                  <span><%= routine.ai_summary %></span>
+
+          <div class="db-routine-card__body">
+            <% if r[:routine]&.routine_steps&.any? %>
+              <% steps = r[:routine].routine_steps.includes(user_product: :product).order(:order) %>
+              <% steps.first(4).each do |step| %>
+                <div class="db-routine-step">
+                  <span class="db-routine-step__num"><%= step.order %></span>
+                  <span class="db-routine-step__name"><%= step.user_product.product.name %></span>
                 </div>
               <% end %>
+              <% if steps.count > 4 %>
+                <p class="db-routine-card__more">+ <%= steps.count - 4 %> étape<%= "s" if steps.count - 4 > 1 %></p>
+              <% end %>
             <% else %>
-              <p class="text-muted" style="font-size:13px; margin-bottom: 16px">
-                Aucune routine générée pour le moment.
-              </p>
+              <p class="db-routine-card__empty">Aucune routine générée.</p>
             <% end %>
-            <%= button_to "✨ Générer",
-                  generate_routine_path(routine || 0),
+          </div>
+
+          <div class="db-routine-card__footer">
+            <%= button_to generate_routine_path(r[:routine] || 0),
                   method: :post,
-                  class: "btn-glow btn-glow--outline btn-glow--sm w-100 mt-2",
-                  form: { "data-turbo" => "false" } %>
+                  class: "db-routine-card__btn",
+                  form: { "data-turbo" => "false" } do %>
+              <% if r[:routine] %>
+                <i class="fa-solid fa-rotate"></i> Régénérer
+              <% else %>
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Générer
+              <% end %>
+            <% end %>
           </div>
         </div>
-      </div>
-    <% end %>
+      <% end %>
+    </div>
   </div>
 
-  <%# ── Collection ── %>
-  <div class="glow-card mb-4">
-    <div class="glow-card__header">
-      <h2 class="glow-card__title">🧴 Ma collection</h2>
-      <%= link_to "Tout voir →", products_path, class: "btn-glow btn-glow--ghost btn-glow--sm" %>
+  <%# ══════════════════════════════════════════
+      COLLECTION
+  ══════════════════════════════════════════ %>
+  <div class="db-section">
+    <div class="db-section__header">
+      <h2 class="db-section__title">Ma collection</h2>
+      <%= link_to products_path, class: "db-section__link" do %>Tout voir <i class="fa-solid fa-arrow-right"></i><% end %>
     </div>
 
     <% if @user_products.any? %>
-      <div class="product-grid">
+      <div class="db-products">
         <% @user_products.first(6).each do |up| %>
-          <div class="product-chip">
-            <% if up.product.image_url.present? %>
-              <%= image_tag up.product.image_url, alt: up.product.name, class: "product-chip__img" %>
-            <% else %>
-              <div class="product-chip__placeholder">🧴</div>
-            <% end %>
-            <div class="product-chip__info">
-              <span class="product-chip__name"><%= up.product.name %></span>
-              <span class="product-chip__brand"><%= up.product.brand %></span>
+          <div class="db-product-card">
+            <div class="db-product-card__thumb">
+              <% if up.product.image_url.present? %>
+                <%= image_tag up.product.image_url, alt: up.product.name %>
+              <% else %>
+                <span class="db-product-card__emoji"><i class="fa-solid fa-bottle-droplet"></i></span>
+              <% end %>
             </div>
-            <% slot_class = { "morning" => "slot-pill--morning", "evening" => "slot-pill--evening", "both" => "slot-pill--both" }.fetch(up.usage_slot, "slot-pill--both") %>
-            <span class="slot-pill <%= slot_class %>">
-              <%= { "morning" => "☀️ Matin", "evening" => "🌙 Soir", "both" => "✦ AM/PM" }[up.usage_slot] %>
+            <% slot_icons = { "morning" => "fa-sun", "evening" => "fa-moon", "both" => "fa-circle-half-stroke" } %>
+            <% slot_class = { "morning" => "slot-pill--morning", "evening" => "slot-pill--evening", "both" => "slot-pill--both" }.fetch(up.usage_slot.to_s, "slot-pill--both") %>
+            <span class="slot-pill <%= slot_class %> db-product-card__slot">
+              <i class="fa-solid <%= slot_icons.fetch(up.usage_slot.to_s, 'fa-circle-half-stroke') %>"></i>
             </span>
+            <div class="db-product-card__info">
+              <p class="db-product-card__name"><%= up.product.name %></p>
+              <p class="db-product-card__brand"><%= up.product.brand %></p>
+            </div>
           </div>
+        <% end %>
+        <% if @user_products.count > 6 %>
+          <%= link_to products_path, class: "db-product-card db-product-card--more" do %>
+            <span class="db-product-card__more-count">+<%= @user_products.count - 6 %></span>
+            <span class="db-product-card__more-label">voir tout</span>
+          <% end %>
         <% end %>
       </div>
     <% else %>
-      <div class="empty-state">
-        <span class="empty-state__icon">🧴</span>
-        <p class="empty-state__title">Ta collection est vide</p>
-        <p class="empty-state__sub">Ajoute tes premiers produits pour commencer.</p>
-        <%= link_to "Ajouter un produit", new_product_path, class: "btn-glow btn-glow--primary btn-glow--sm" %>
+      <div class="db-empty">
+        <div class="db-empty__icon"><i class="fa-solid fa-bottle-droplet"></i></div>
+        <p class="db-empty__title">Ta collection est vide</p>
+        <p class="db-empty__sub">Commence par ajouter tes premiers produits.</p>
+        <%= link_to new_product_path, class: "db-cta-btn db-cta-btn--sm" do %>
+          <i class="fa-solid fa-plus"></i> Ajouter un produit
+        <% end %>
       </div>
     <% end %>
   </div>
 
-  <%# ── Chat shortcut ── %>
-  <div class="chat-shortcut">
-    <div>
-      <p class="chat-shortcut__title">✨ Ton assistante skincare IA</p>
-      <p class="chat-shortcut__preview">
-        <% if @recent_messages.any? %>
-          "<%= truncate(@recent_messages.first.content, length: 70) %>"
-        <% else %>
-          Pose une question sur tes produits, tes routines ou les interactions.
-        <% end %>
-      </p>
+  <%# ══════════════════════════════════════════
+      CHAT IA
+  ══════════════════════════════════════════ %>
+  <div class="db-ai-banner">
+    <div class="db-ai-banner__bg"></div>
+    <div class="db-ai-banner__content">
+      <div>
+        <p class="db-ai-banner__label">Assistant IA Glowria</p>
+        <p class="db-ai-banner__title">Des conseils skincare<br>sur mesure, en temps réel.</p>
+        <p class="db-ai-banner__preview">
+          <% if @recent_messages.any? %>
+            "<%= truncate(@recent_messages.first.content, length: 80) %>"
+          <% else %>
+            Pose une question sur tes produits, tes ingrédients ou tes interactions.
+          <% end %>
+        </p>
+      </div>
+      <%= link_to chat_messages_path, class: "db-ai-banner__btn" do %>
+        Ouvrir le chat <i class="fa-solid fa-arrow-right"></i>
+      <% end %>
     </div>
-    <%= link_to "Ouvrir le chat →", chat_messages_path, class: "btn-glow btn-glow--outline btn-glow--sm" %>
   </div>
 
 </div>

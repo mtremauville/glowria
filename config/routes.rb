@@ -6,6 +6,11 @@ Rails.application.routes.draw do
 
   get "up" => "rails/health#show", as: :rails_health_check
 
+  # PWA
+  get "manifest" => "pwa#manifest", as: :pwa_manifest, defaults: { format: :json }
+  get "service-worker" => "pwa#service_worker", as: :pwa_service_worker
+  get "offline" => "pwa#offline", as: :pwa_offline
+
   resources :products, only: [:index, :show, :new, :create] do
     collection { get :lookup }
   end

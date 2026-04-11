@@ -6,51 +6,68 @@
       <h1 class="page-header__title">Mes routines</h1>
       <p class="page-header__sub">Générées par l'IA selon ta collection et ton type de peau</p>
     </div>
-    <%= button_to "✨ Régénérer",
-          generate_routine_path(0),
+    <%= button_to generate_routine_path(0),
           method: :post,
           class: "btn-glow btn-glow--primary btn-glow--sm",
-          form: { "data-turbo" => "false" } %>
+          form: { "data-turbo" => "false" } do %>
+      <i class="fa-solid fa-rotate"></i> Régénérer
+    <% end %>
   </div>
 
   <div class="grid grid-2-auto">
-    <% { "morning" => ["☀️", "Routine matin", @morning], "evening" => ["🌙", "Routine soir", @evening] }.each do |period, (icon, label, routine)| %>
+    <% [
+      { period: "morning", icon: "fa-sun",  label: "Routine matin", routine: @morning },
+      { period: "evening", icon: "fa-moon", label: "Routine soir",  routine: @evening }
+    ].each do |r| %>
       <div class="routine-card">
         <div class="routine-card__header">
-          <span class="routine-card__label"><%= icon %> <%= label %></span>
-          <% if routine %>
-            <span class="routine-card__age">Générée <%= time_ago_in_words(routine.generated_at) %></span>
+          <span class="routine-card__label">
+            <i class="fa-solid <%= r[:icon] %>"></i> <%= r[:label] %>
+          </span>
+          <% if r[:routine] %>
+            <span class="routine-card__age">Générée <%= time_ago_in_words(r[:routine].generated_at) %></span>
           <% end %>
         </div>
         <div class="routine-card__body">
-          <% if routine&.routine_steps&.any? %>
-            <% if routine.ai_summary.present? %>
+          <% if r[:routine]&.routine_steps&.any? %>
+            <% if r[:routine].ai_summary.present? %>
               <div class="routine-summary mb-4">
-                <span>💡</span>
-                <span><%= routine.ai_summary %></span>
+                <i class="fa-solid fa-lightbulb"></i>
+                <span><%= r[:routine].ai_summary %></span>
               </div>
             <% end %>
             <div class="flex flex-col gap-3">
-              <% routine.routine_steps.includes(user_product: :product).order(:order).each do |step| %>
+              <% r[:routine].routine_steps.order(:order).each do |step| %>
+                <% product = step.user_product.product %>
+                <% molecules = product.product_ingredients.sort_by(&:position).map { |pi| pi.ingredient.name } %>
                 <div class="routine-step">
                   <span class="routine-step__num"><%= step.order %></span>
-                  <div class="routine-step__content flex-1">
-                    <div class="routine-step__name"><%= step.user_product.product.name %></div>
-                    <div class="routine-step__brand"><%= step.user_product.product.brand %></div>
+                  <div class="routine-step__content">
+                    <div class="routine-step__name"><%= product.name %></div>
                     <div class="routine-step__tip"><%= step.instruction %></div>
+                    <% if molecules.any? %>
+                      <div class="routine-step__molecules">
+                        <% molecules.first(4).each do |mol| %>
+                          <span class="molecule-tag"><%= mol %></span>
+                        <% end %>
+                        <% if molecules.size > 4 %>
+                          <span class="molecule-tag molecule-tag--more">+<%= molecules.size - 4 %></span>
+                        <% end %>
+                      </div>
+                    <% end %>
                   </div>
-                  <% if step.user_product.product.image_url.present? %>
-                    <%= image_tag step.user_product.product.image_url,
-                          alt: step.user_product.product.name,
-                          class: "routine-step__img" %>
+                  <% if product.image_url.present? %>
+                    <%= image_tag product.image_url, alt: product.name, class: "routine-step__img" %>
                   <% end %>
                 </div>
               <% end %>
             </div>
           <% else %>
             <div class="empty-state py-8">
-              <span class="empty-state__icon"><%= period == "morning" ? "☀️" : "🌙" %></span>
-              <p class="empty-state__title">Aucune routine <%= period == "morning" ? "matin" : "soir" %></p>
+              <span class="empty-state__icon">
+                <i class="fa-solid <%= r[:period] == 'morning' ? 'fa-sun' : 'fa-moon' %>"></i>
+              </span>
+              <p class="empty-state__title">Aucune routine <%= r[:period] == "morning" ? "matin" : "soir" %></p>
               <p class="empty-state__sub">Ajoute des produits puis clique sur "Régénérer".</p>
             </div>
           <% end %>

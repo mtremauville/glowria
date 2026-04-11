@@ -1,2 +1,77 @@
-<h1>Products#index</h1>
-<p>Find me in app/views/products/index.html.erb</p>
+<%# app/views/products/index.html.erb %>
+<div class="container" style="max-width: 860px">
+
+  <%# ── Header ── %>
+  <div class="dash-hero">
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+      <div>
+        <h1 class="dash-hero__greeting"><i class="fa-solid fa-bottle-droplet"></i> Ma collection</h1>
+        <p class="dash-hero__sub">
+          <%= @user_products.count %> produit<%= "s" if @user_products.count != 1 %> dans ta routine
+        </p>
+      </div>
+      <%= link_to new_product_path, class: "btn-glow btn-glow--primary btn-glow--sm align-self-start" do %>
+        <i class="fa-solid fa-plus"></i> Ajouter un produit
+      <% end %>
+    </div>
+  </div>
+
+  <%# ── Liste des produits ── %>
+  <div class="glow-card">
+    <% if @user_products.any? %>
+      <% @user_products.each do |up| %>
+        <% molecules = up.product.product_ingredients.sort_by(&:position).map { |pi| pi.ingredient.name } %>
+        <div class="product-row">
+          <div class="product-row__main">
+            <% if up.product.image_url.present? %>
+              <%= image_tag up.product.image_url, alt: up.product.name, class: "product-chip__img" %>
+            <% else %>
+              <div class="product-chip__placeholder"><i class="fa-solid fa-bottle-droplet"></i></div>
+            <% end %>
+
+            <div class="product-chip__info">
+              <span class="product-chip__name"><%= up.product.name %></span>
+              <span class="product-chip__brand"><%= up.product.brand %><% if up.product.category.present? %> · <%= up.product.category %><% end %></span>
+            </div>
+
+            <% slot_icons = { "morning" => "fa-sun", "evening" => "fa-moon", "both" => "fa-circle-half-stroke" } %>
+            <% slot_labels = { "morning" => "Matin", "evening" => "Soir", "both" => "AM/PM" } %>
+            <% slot_class = { "morning" => "slot-pill--morning", "evening" => "slot-pill--evening", "both" => "slot-pill--both" }.fetch(up.usage_slot.to_s, "slot-pill--both") %>
+            <span class="slot-pill <%= slot_class %>">
+              <i class="fa-solid <%= slot_icons.fetch(up.usage_slot.to_s, 'fa-circle-half-stroke') %>"></i>
+              <%= slot_labels.fetch(up.usage_slot.to_s, "AM/PM") %>
+            </span>
+
+            <%= button_to user_product_path(up),
+                  method: :delete,
+                  class: "btn-glow btn-glow--ghost btn-glow--sm product-row__delete",
+                  data: { turbo_confirm: "Retirer #{up.product.name} de ta collection ?" } do %>
+              <i class="fa-solid fa-xmark"></i>
+            <% end %>
+          </div>
+
+          <% if molecules.any? %>
+            <div class="product-row__molecules">
+              <% molecules.first(5).each do |mol| %>
+                <span class="molecule-tag"><%= mol %></span>
+              <% end %>
+              <% if molecules.size > 5 %>
+                <span class="molecule-tag molecule-tag--more">+<%= molecules.size - 5 %></span>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="empty-state">
+        <span class="empty-state__icon"><i class="fa-solid fa-bottle-droplet"></i></span>
+        <p class="empty-state__title">Ta collection est vide</p>
+        <p class="empty-state__sub">Ajoute tes premiers produits pour commencer.</p>
+        <%= link_to new_product_path, class: "btn-glow btn-glow--primary btn-glow--sm" do %>
+          <i class="fa-solid fa-plus"></i> Ajouter un produit
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+</div>

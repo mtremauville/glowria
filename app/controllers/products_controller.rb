@@ -4,7 +4,7 @@ class ProductsController < ApplicationController
 
   def index
     @user_products = current_user.user_products
-                                 .includes(:product)
+                                 .includes(product: { product_ingredients: :ingredient })
                                  .active
                                  .order(created_at: :desc)
   end

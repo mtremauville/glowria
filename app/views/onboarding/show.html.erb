@@ -2,7 +2,7 @@
 <div class="container container--sm py-8">
 
   <div class="onboarding-hero">
-    <span class="onboarding-hero__icon">🌿</span>
+    <span class="onboarding-hero__icon"><i class="fa-solid fa-leaf"></i></span>
     <h1 class="onboarding-hero__title">Parle-moi de ta peau</h1>
     <p class="onboarding-hero__sub">
       Ces infos permettent à l'IA de personnaliser tes routines et conseils.
@@ -18,15 +18,15 @@
       <div class="glow-card__body">
         <div class="skin-type-grid">
           <% {
-            "normal"   => ["😊", "Normal",   "Ni trop gras, ni trop sec"],
-            "sec"      => ["🌵", "Sec",      "Tiraillements, manque de confort"],
-            "mixte"    => ["⚡", "Mixte",    "Zone T grasse, joues sèches"],
-            "gras"     => ["💧", "Gras",     "Brillance, pores dilatés"],
-            "sensible" => ["🌸", "Sensible", "Rougeurs, réactivité"],
+            "normal"   => ["fa-face-smile",   "Normal",   "Ni trop gras, ni trop sec"],
+            "sec"      => ["fa-sun",           "Sec",      "Tiraillements, manque de confort"],
+            "mixte"    => ["fa-bolt",          "Mixte",    "Zone T grasse, joues sèches"],
+            "gras"     => ["fa-droplet",       "Gras",     "Brillance, pores dilatés"],
+            "sensible" => ["fa-heart",         "Sensible", "Rougeurs, réactivité"],
           }.each do |value, (icon, label, desc)| %>
             <label class="skin-type-option <%= 'selected' if current_user.skin_type == value %>">
               <%= f.radio_button :skin_type, value, class: "d-none" %>
-              <span class="skin-type-option__icon"><%= icon %></span>
+              <span class="skin-type-option__icon"><i class="fa-solid <%= icon %>"></i></span>
               <span class="skin-type-option__label"><%= label %></span>
               <span class="skin-type-option__desc"><%= desc %></span>
             </label>
@@ -43,18 +43,18 @@
       <div class="glow-card__body">
         <div class="checkbox-grid">
           <% {
-            "hydratation"  => "💧 Hydratation",
-            "anti-age"     => "⏳ Anti-âge",
-            "eclat"        => "✨ Éclat",
-            "acne"         => "🎯 Anti-acné",
-            "pores"        => "🔬 Pores",
-            "pigmentation" => "🌓 Taches"
-          }.each do |value, label| %>
+            "hydratation"  => ["fa-droplet",           "Hydratation"],
+            "anti-age"     => ["fa-hourglass-half",     "Anti-âge"],
+            "eclat"        => ["fa-star",               "Éclat"],
+            "acne"         => ["fa-bullseye",           "Anti-acné"],
+            "pores"        => ["fa-magnifying-glass",   "Pores"],
+            "pigmentation" => ["fa-circle-half-stroke", "Taches"]
+          }.each do |value, (icon, label)| %>
             <label class="checkbox-chip">
               <%= check_box_tag "user[skin_goals][]", value,
                     Array(current_user.skin_goals).include?(value),
                     id: "goal_#{value}" %>
-              <%= label %>
+              <i class="fa-solid <%= icon %>"></i> <%= label %>
             </label>
           <% end %>
         </div>
@@ -69,25 +69,27 @@
       <div class="glow-card__body">
         <div class="checkbox-grid">
           <% {
-            "rougeurs"      => "🔴 Rougeurs",
-            "rides"         => "〰️ Rides",
-            "cernes"        => "👁️ Cernes",
-            "secheresse"    => "🌬️ Sécheresse",
-            "brillance"     => "🌟 Brillance",
-            "imperfections" => "⚪ Imperfections"
-          }.each do |value, label| %>
+            "rougeurs"      => ["fa-circle",           "Rougeurs"],
+            "rides"         => ["fa-water",            "Rides"],
+            "cernes"        => ["fa-eye",              "Cernes"],
+            "secheresse"    => ["fa-wind",             "Sécheresse"],
+            "brillance"     => ["fa-star",             "Brillance"],
+            "imperfections" => ["fa-circle-dot",       "Imperfections"]
+          }.each do |value, (icon, label)| %>
             <label class="checkbox-chip">
               <%= check_box_tag "user[skin_concerns][]", value,
                     Array(current_user.skin_concerns).include?(value),
                     id: "concern_#{value}" %>
-              <%= label %>
+              <i class="fa-solid <%= icon %>"></i> <%= label %>
             </label>
           <% end %>
         </div>
       </div>
     </div>
 
-    <%= f.submit "Commencer →", class: "btn-glow btn-glow--primary w-100", style: "padding: 14px; font-size: 15px" %>
+    <button type="submit" class="btn-glow btn-glow--primary w-100" style="padding: 14px; font-size: 15px">
+      Commencer <i class="fa-solid fa-arrow-right"></i>
+    </button>
   <% end %>
 
 </div>

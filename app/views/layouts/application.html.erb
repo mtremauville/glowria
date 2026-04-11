@@ -3,36 +3,57 @@
 <html>
   <head>
     <title>Glowria</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="theme-color" content="#f9a8d4">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Glowria">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
+    <link rel="manifest" href="/manifest">
+    <link rel="apple-touch-icon" href="/icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "application" %>
     <%= javascript_importmap_tags %>
   </head>
   <body>
     <%= render "layouts/navbar" %>
+    <%# Mini header mobile (logo + déconnexion) — caché sur desktop %>
+    <% if user_signed_in? %>
+      <header class="mobile-header">
+        <span class="mobile-header__brand"><i class="fa-solid fa-leaf"></i> Glowria</span>
+        <%= link_to destroy_user_session_path,
+              data: { turbo_method: :delete },
+              class: "mobile-header__signout",
+              title: "Déconnexion" do %>
+          <i class="fa-solid fa-right-from-bracket"></i>
+        <% end %>
+      </header>
+    <% end %>
     <% if notice.present? %>
       <div class="glow-toast glow-toast--success" role="alert">
-        <span class="glow-toast__icon">✓</span>
+        <span class="glow-toast__icon"><i class="fa-solid fa-circle-check"></i></span>
         <%= notice %>
-        <button type="button" class="glow-toast__close" onclick="this.parentElement.remove()">×</button>
+        <button type="button" class="glow-toast__close" onclick="this.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button>
       </div>
     <% end %>
     <% if alert.present? %>
       <div class="glow-toast glow-toast--error" role="alert">
-        <span class="glow-toast__icon">⚠</span>
+        <span class="glow-toast__icon"><i class="fa-solid fa-circle-exclamation"></i></span>
         <%= alert %>
-        <button type="button" class="glow-toast__close" onclick="this.parentElement.remove()">×</button>
+        <button type="button" class="glow-toast__close" onclick="this.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button>
       </div>
     <% end %>
     <% if flash[:warning].present? %>
       <div class="glow-toast glow-toast--warning" role="alert">
-        <span class="glow-toast__icon">⚡</span>
+        <span class="glow-toast__icon"><i class="fa-solid fa-bolt"></i></span>
         <%= flash[:warning] %>
-        <button type="button" class="glow-toast__close" onclick="this.parentElement.remove()">×</button>
+        <button type="button" class="glow-toast__close" onclick="this.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button>
       </div>
     <% end %>
     <div class="glow-page">
