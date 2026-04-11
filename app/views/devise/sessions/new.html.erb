@@ -1,0 +1,317 @@
+<style>
+.auth-page {
+  min-height: 100vh;
+  background: #F7F4EF;
+  font-family: "Geologica", sans-serif;
+}
+
+.auth-layout {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  min-height: 100vh;
+}
+
+/* LEFT PANEL */
+.auth-hero {
+  position: relative;
+  background: linear-gradient(rgba(28,25,22,0.22), rgba(28,25,22,0.48)),
+    url("https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1400&q=80");
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  padding: 4rem;
+  color: white;
+}
+
+.auth-hero__content { max-width: 520px; position: relative; z-index: 2; }
+
+.auth-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 3.5rem;
+}
+
+.auth-eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.7rem;
+  font-weight: 500;
+  opacity: 0.6;
+  margin-bottom: 1.25rem;
+}
+
+.auth-hero__title {
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(3rem, 5vw, 5rem);
+  line-height: 0.95;
+  font-weight: 400;
+  font-style: italic;
+  margin-bottom: 2rem;
+}
+
+.auth-hero__subtitle {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  opacity: 0.8;
+  margin-bottom: 3rem;
+  max-width: 420px;
+}
+
+.auth-benefits { display: flex; flex-direction: column; gap: 0.9rem; }
+
+.auth-benefit {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.88rem;
+  opacity: 0.85;
+}
+
+/* RIGHT PANEL */
+.auth-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2.5rem;
+  background: #F7F4EF;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+}
+
+.auth-card__eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #A39890;
+  margin-bottom: 0.75rem;
+}
+
+.auth-card__title {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 2.8rem;
+  color: #1C1916;
+  margin-bottom: 0.5rem;
+  font-weight: 400;
+  line-height: 1.05;
+}
+
+.auth-card__subtitle {
+  color: #6B6560;
+  line-height: 1.6;
+  margin-bottom: 2.5rem;
+  font-size: 0.9rem;
+}
+
+.auth-form { display: flex; flex-direction: column; gap: 1.25rem; }
+
+.auth-group { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.auth-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.auth-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #1C1916;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.auth-input {
+  width: 100%;
+  border: 1px solid #DDD8CF;
+  background: #FFFFFF;
+  border-radius: 4px;
+  padding: 0.85rem 1rem;
+  font-size: 0.95rem;
+  font-family: "Geologica", sans-serif;
+  color: #1C1916;
+  transition: border-color 0.2s ease;
+}
+
+.auth-input:focus {
+  outline: none;
+  border-color: #1C1916;
+  background: white;
+}
+
+.auth-forgot {
+  font-size: 0.78rem;
+  color: #6B6560;
+  text-decoration: none;
+}
+.auth-forgot:hover { color: #1C1916; }
+
+.auth-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #6B6560;
+  font-size: 0.88rem;
+}
+
+.auth-button {
+  margin-top: 0.75rem;
+  width: 100%;
+  background: #1C1916;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 1rem;
+  font-size: 0.9rem;
+  font-family: "Geologica", sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.auth-button:hover { background: #0A0806; }
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1.5rem 0 1rem;
+}
+.auth-divider::before, .auth-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #DDD8CF;
+}
+.auth-divider span {
+  font-size: 0.75rem;
+  color: #A39890;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.auth-footer {
+  text-align: center;
+  color: #6B6560;
+  font-size: 0.88rem;
+}
+.auth-footer__link {
+  color: #1C1916;
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid #1C1916;
+}
+.auth-footer__link:hover { opacity: 0.7; }
+
+/* MOBILE */
+@media (max-width: 900px) {
+  .auth-layout { grid-template-columns: 1fr; }
+  .auth-hero { min-height: 40vh; padding: 2.5rem 2rem; }
+  .auth-panel { padding: 2.5rem 1.5rem; align-items: flex-start; }
+  .auth-hero__title { font-size: 3rem; }
+}
+</style>
+
+<div class="auth-page">
+  <div class="auth-layout">
+
+    <!-- LEFT PANEL -->
+    <section class="auth-hero">
+      <div class="auth-hero__content">
+        <div class="auth-logo">
+          <i class="fa-solid fa-leaf"></i>
+          <span>Glowria</span>
+        </div>
+
+        <p class="auth-eyebrow">Skincare intelligent</p>
+
+        <h1 class="auth-hero__title">
+          La science<br>au service<br>de ta peau.
+        </h1>
+
+        <p class="auth-hero__subtitle">
+          Comprends tes produits, évite les conflits d'actifs
+          et construis une routine sur-mesure avec l'IA.
+        </p>
+
+        <div class="auth-benefits">
+          <div class="auth-benefit">
+            <i class="fa-solid fa-flask"></i>
+            <span>Analyse intelligente des ingrédients</span>
+          </div>
+          <div class="auth-benefit">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span>Routine personnalisée matin &amp; soir</span>
+          </div>
+          <div class="auth-benefit">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <span>Assistant beauté disponible 24h/24</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT PANEL -->
+    <section class="auth-panel">
+      <div class="auth-card">
+
+        <p class="auth-card__eyebrow">Bon retour</p>
+        <h2 class="auth-card__title">Connexion</h2>
+        <p class="auth-card__subtitle">
+          Accède à ton diagnostic et tes routines personnalisées.
+        </p>
+
+        <%= render "devise/shared/error_messages", resource: resource %>
+
+        <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "auth-form" }) do |f| %>
+
+          <div class="auth-group">
+            <%= f.label :email, "Adresse e-mail", class: "auth-label" %>
+            <%= f.email_field :email, autofocus: true, autocomplete: "email",
+                  placeholder: "toi@exemple.com", class: "auth-input" %>
+          </div>
+
+          <div class="auth-group">
+            <div class="auth-label-row">
+              <%= f.label :password, "Mot de passe", class: "auth-label" %>
+              <% if devise_mapping.recoverable? %>
+                <%= link_to "Oublié ?", new_password_path(resource_name), class: "auth-forgot" %>
+              <% end %>
+            </div>
+            <%= f.password_field :password, autocomplete: "current-password",
+                  placeholder: "••••••••", class: "auth-input" %>
+          </div>
+
+          <% if devise_mapping.rememberable? %>
+            <label class="auth-checkbox">
+              <%= f.check_box :remember_me %>
+              <span>Se souvenir de moi</span>
+            </label>
+          <% end %>
+
+          <%= f.submit "Se connecter", class: "auth-button" %>
+
+        <% end %>
+
+        <div class="auth-divider"><span>ou</span></div>
+
+        <p class="auth-footer">
+          Pas encore de compte ?
+          <%= link_to "Créer un compte", new_registration_path(resource_name), class: "auth-footer__link" %>
+        </p>
+
+      </div>
+    </section>
+
+  </div>
+</div>

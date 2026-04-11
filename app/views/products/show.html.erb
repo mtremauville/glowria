@@ -1,2 +1,114 @@
-<h1>Products#show</h1>
-<p>Find me in app/views/products/show.html.erb</p>
+<%# app/views/products/show.html.erb %>
+<div class="container" style="max-width: 780px">
+
+  <%# ── Back ── %>
+  <%= link_to products_path, class: "prod-back" do %>
+    <i class="fa-solid fa-arrow-left"></i> Ma collection
+  <% end %>
+
+  <%# ── Header produit ── %>
+  <div class="prod-header">
+    <div class="prod-header__thumb">
+      <% if @product.image_url.present? %>
+        <%= image_tag @product.image_url, alt: @product.name, class: "prod-header__img" %>
+      <% else %>
+        <i class="fa-solid fa-bottle-droplet prod-header__icon"></i>
+      <% end %>
+    </div>
+
+    <div class="prod-header__info">
+      <% if @product.brand.present? %>
+        <p class="prod-header__brand"><%= @product.brand.upcase %></p>
+      <% end %>
+      <h1 class="prod-header__name"><%= @product.name %></h1>
+      <% if @product.category.present? %>
+        <span class="prod-header__category"><%= @product.category %></span>
+      <% end %>
+      <% if @product.description.present? %>
+        <p class="prod-header__desc"><%= @product.description %></p>
+      <% end %>
+    </div>
+  </div>
+
+  <%# ── Actifs clés ── %>
+  <% if @active_ingredients.any? %>
+    <section class="prod-section">
+      <div class="prod-section__header">
+        <h2 class="prod-section__title">Actifs clés</h2>
+        <span class="prod-section__count"><%= @active_ingredients.size %> actif<%= "s" if @active_ingredients.size > 1 %></span>
+      </div>
+
+      <div class="prod-actives">
+        <% @active_ingredients.first(8).each do |pi| %>
+          <% ing = pi.ingredient %>
+          <div class="prod-active-card">
+            <div class="prod-active-card__head">
+              <span class="prod-active-card__name"><%= ing.name %></span>
+              <% if ing.inci_name.present? && ing.inci_name.downcase != ing.name.downcase %>
+                <span class="prod-active-card__inci"><%= ing.inci_name %></span>
+              <% end %>
+            </div>
+
+            <% if ing.function.present? %>
+              <p class="prod-active-card__function"><%= ing.function %></p>
+            <% end %>
+
+            <div class="prod-active-card__tags">
+              <% if ing.benefits.present? %>
+                <% ing.benefits.split(/[,;]/).map(&:strip).reject(&:empty?).first(3).each do |b| %>
+                  <span class="prod-tag prod-tag--benefit"><i class="fa-solid fa-plus"></i> <%= b %></span>
+                <% end %>
+              <% end %>
+              <% if ing.concerns.present? %>
+                <% ing.concerns.split(/[,;]/).map(&:strip).reject(&:empty?).first(2).each do |c| %>
+                  <span class="prod-tag prod-tag--concern"><i class="fa-solid fa-triangle-exclamation"></i> <%= c %></span>
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+
+  <%# ── Composition complète INCI ── %>
+  <% if @ingredients.any? %>
+    <section class="prod-section">
+      <div class="prod-section__header">
+        <h2 class="prod-section__title">Composition complète</h2>
+        <span class="prod-section__count"><%= @ingredients.size %> ingrédient<%= "s" if @ingredients.size > 1 %></span>
+      </div>
+
+      <div class="prod-inci">
+        <% @ingredients.each do |pi| %>
+          <% ing = pi.ingredient %>
+          <div class="prod-inci__item <%= 'prod-inci__item--active' if ing.function.present? || ing.benefits.present? %>">
+            <span class="prod-inci__pos"><%= pi.position || loop.index + 1 %></span>
+            <div class="prod-inci__body">
+              <span class="prod-inci__name"><%= ing.inci_name.present? ? ing.inci_name : ing.name %></span>
+              <% if ing.name.present? && ing.inci_name.present? && ing.inci_name.downcase != ing.name.downcase %>
+                <span class="prod-inci__common"><%= ing.name %></span>
+              <% end %>
+            </div>
+            <% if ing.function.present? %>
+              <span class="prod-inci__fn"><%= ing.function.split(/[,;]/).first.strip %></span>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+
+      <p class="prod-inci__note">
+        <i class="fa-solid fa-circle-info"></i>
+        Les ingrédients sont listés par ordre décroissant de concentration.
+        Les ingrédients <span class="prod-inci__note--highlight">surlignés</span> sont des actifs identifiés.
+      </p>
+    </section>
+  <% else %>
+    <div class="prod-empty">
+      <i class="fa-solid fa-flask prod-empty__icon"></i>
+      <p class="prod-empty__title">Composition non disponible</p>
+      <p class="prod-empty__sub">Aucun ingrédient n'a été trouvé pour ce produit.</p>
+    </div>
+  <% end %>
+
+</div>

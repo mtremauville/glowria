@@ -1,88 +1,603 @@
-<%# app/views/conflicts/index.html.erb %>
-<div class="container container--md">
+<style>
+  .conflicts-page {
+  min-height: 100vh;
+  padding: 4rem 0 6rem;
+  background:
+    radial-gradient(circle at top left, rgba(214, 204, 194, 0.28), transparent 35%),
+    radial-gradient(circle at top right, rgba(235, 228, 219, 0.35), transparent 30%),
+    #f7f3ee;
+  font-family: "Inter", sans-serif;
+  color: #2f261e;
+}
 
-  <div class="page-header">
-    <div>
-      <h1 class="page-header__title">Interactions détectées</h1>
-      <p class="page-header__sub">
-        <%= @conflict_count %> interaction<%= "s" if @conflict_count != 1 %>
-        dans ta collection
-      </p>
-    </div>
-    <%= link_to root_path, class: "btn-glow btn-glow--outline btn-glow--sm" do %>
-      <i class="fa-solid fa-arrow-left"></i> Dashboard
-    <% end %>
-  </div>
+/* =========================
+   CONTAINER
+========================= */
 
-  <% if @conflict_count == 0 %>
-    <div class="glow-card">
-      <div class="empty-state py-8">
-        <span class="empty-state__icon"><i class="fa-solid fa-circle-check"></i></span>
-        <p class="empty-state__title">Aucun conflit détecté !</p>
-        <p class="empty-state__sub">Tes produits sont parfaitement compatibles entre eux.</p>
-        <%= link_to "Voir ma collection", products_path, class: "btn-glow btn-glow--primary btn-glow--sm" %>
+.container--xl {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* =========================
+   HERO
+========================= */
+
+.conflicts-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 2rem;
+  margin-bottom: 4rem;
+}
+
+.conflicts-hero__content {
+  max-width: 720px;
+}
+
+.conflicts-hero__eyebrow {
+  margin: 0 0 1rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #8d7d6d;
+}
+
+.conflicts-hero__title {
+  margin: 0;
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(3rem, 5vw, 5rem);
+  line-height: 0.95;
+  font-weight: 500;
+  color: #2f261e;
+}
+
+.conflicts-hero__subtitle {
+  margin-top: 1.4rem;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #6f6459;
+}
+
+.conflicts-hero__subtitle strong {
+  color: #2f261e;
+  font-weight: 600;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+.conflicts-back-btn,
+.conflicts-primary-btn,
+.conflicts-secondary-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.conflicts-back-btn {
+  padding: 1rem 1.4rem;
+  border: 1px solid rgba(47, 38, 30, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.7);
+  color: #2f261e;
+  font-size: 0.95rem;
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+}
+
+.conflicts-back-btn:hover {
+  transform: translateY(-1px);
+  background: white;
+}
+
+.conflicts-primary-btn {
+  padding: 1rem 2rem;
+  border-radius: 999px;
+  background: #2f261e;
+  color: white;
+  font-weight: 500;
+  box-shadow: 0 10px 30px rgba(47, 38, 30, 0.15);
+}
+
+.conflicts-primary-btn:hover {
+  transform: translateY(-2px);
+  background: #1f1813;
+}
+
+.conflicts-secondary-btn {
+  padding: 0.95rem 1.3rem;
+  border: 1px solid rgba(47, 38, 30, 0.12);
+  border-radius: 999px;
+  color: #2f261e;
+  font-size: 0.95rem;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.conflicts-secondary-btn:hover {
+  transform: translateY(-1px);
+  background: white;
+}
+
+/* =========================
+   EMPTY STATE
+========================= */
+
+.conflicts-empty-card {
+  max-width: 760px;
+  margin: 4rem auto 0;
+  text-align: center;
+  padding: 5rem 3rem;
+  border-radius: 32px;
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(47, 38, 30, 0.06);
+  box-shadow: 0 20px 60px rgba(47, 38, 30, 0.08);
+}
+
+.conflicts-empty-card__icon {
+  width: 88px;
+  height: 88px;
+  margin: 0 auto 2rem;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(218, 239, 214, 0.6);
+  color: #4d7d55;
+  font-size: 2rem;
+}
+
+.conflicts-empty-card__title {
+  margin: 0;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 3rem;
+  font-weight: 500;
+}
+
+.conflicts-empty-card__subtitle {
+  max-width: 580px;
+  margin: 1.2rem auto 2.5rem;
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: #6f6459;
+}
+
+/* =========================
+   SECTIONS
+========================= */
+
+.conflicts-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+}
+
+.conflicts-section__header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.3rem;
+  margin-bottom: 2rem;
+}
+
+.conflicts-section__icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.conflicts-section__header--high .conflicts-section__icon {
+  background: rgba(239, 196, 196, 0.35);
+  color: #a04343;
+}
+
+.conflicts-section__header--medium .conflicts-section__icon {
+  background: rgba(245, 222, 189, 0.45);
+  color: #b2741a;
+}
+
+.conflicts-section__header--low .conflicts-section__icon {
+  background: rgba(214, 228, 244, 0.5);
+  color: #5b7895;
+}
+
+.conflicts-section__title-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.conflicts-section__title {
+  margin: 0;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 2.2rem;
+  font-weight: 500;
+}
+
+.conflicts-section__subtitle {
+  margin: 0.5rem 0 0;
+  color: #6f6459;
+  line-height: 1.7;
+}
+
+.conflicts-badge {
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.conflicts-badge--high {
+  background: rgba(160, 67, 67, 0.12);
+  color: #a04343;
+}
+
+.conflicts-badge--medium {
+  background: rgba(178, 116, 26, 0.12);
+  color: #b2741a;
+}
+
+.conflicts-badge--low {
+  background: rgba(91, 120, 149, 0.12);
+  color: #5b7895;
+}
+
+/* =========================
+   GRID
+========================= */
+
+.conflicts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  gap: 2rem;
+}
+
+/* =========================
+   CARD
+========================= */
+
+.conflict-card {
+  padding: 2rem;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(47, 38, 30, 0.06);
+  box-shadow: 0 18px 40px rgba(47, 38, 30, 0.06);
+  transition: all 0.3s ease;
+}
+
+.conflict-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 22px 50px rgba(47, 38, 30, 0.09);
+}
+
+.conflict-card--high {
+  border-left: 4px solid #c97f7f;
+}
+
+.conflict-card--medium {
+  border-left: 4px solid #d9aa67;
+}
+
+.conflict-card--low {
+  border-left: 4px solid #8faaca;
+}
+
+.conflict-card__top {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.conflict-card__product {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.conflict-card__product-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  background: #f8f3ee;
+  color: #8d7d6d;
+  flex-shrink: 0;
+}
+
+.conflict-card__product-name {
+  margin: 0;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #2f261e;
+}
+
+.conflict-card__ingredient {
+  display: inline-block;
+  margin-top: 0.25rem;
+  font-size: 0.85rem;
+  color: #8d7d6d;
+}
+
+.conflict-card__cross {
+  color: #b9aa9c;
+  font-size: 1.2rem;
+}
+
+.conflict-card__alert {
+  margin-bottom: 1.5rem;
+}
+
+.conflict-card__alert p {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.8;
+  color: #574b40;
+}
+
+.conflict-card__tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+  padding: 1.1rem 1.2rem;
+  border-radius: 18px;
+  background: #f9f6f2;
+  color: #6f6459;
+  line-height: 1.7;
+}
+
+.conflict-card__tip i {
+  margin-top: 0.15rem;
+  color: #b18a5b;
+}
+
+.conflict-card__footer {
+  margin-top: 2rem;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 1024px) {
+  .conflicts-hero {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .conflicts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .conflicts-page {
+    padding: 2.5rem 0 4rem;
+  }
+
+  .conflicts-hero {
+    margin-bottom: 2.5rem;
+  }
+
+  .conflicts-hero__title {
+    font-size: 2.8rem;
+  }
+
+  .conflicts-section__title {
+    font-size: 1.8rem;
+  }
+
+  .conflict-card {
+    padding: 1.5rem;
+    border-radius: 22px;
+  }
+
+  .conflict-card__top {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .conflict-card__cross {
+    display: none;
+  }
+
+  .conflicts-empty-card {
+    padding: 3rem 1.5rem;
+    border-radius: 24px;
+  }
+
+  .conflicts-empty-card__title {
+    font-size: 2.2rem;
+  }
+}
+  </style>
+<div class="conflicts-page">
+
+  <div class="container container--xl">
+
+    <!-- HEADER -->
+    <div class="conflicts-hero">
+      <div class="conflicts-hero__content">
+        <p class="conflicts-hero__eyebrow">ANALYSE D’INTERACTIONS</p>
+
+        <h1 class="conflicts-hero__title">
+          Interactions détectées
+        </h1>
+
+        <p class="conflicts-hero__subtitle">
+          <strong><%= @conflict_count %></strong>
+          interaction<%= "s" if @conflict_count != 1 %>
+          identifiée<%= "s" if @conflict_count != 1 %>
+          dans ta routine.
+        </p>
       </div>
-    </div>
 
-  <% else %>
-    <% severity_config = {
-      "high"   => { icon: "fa-circle-exclamation", label: "Conflits sérieux",      desc: "Ces combinaisons peuvent irriter ou endommager ta peau." },
-      "medium" => { icon: "fa-triangle-exclamation", label: "Interactions modérées", desc: "Ces combinaisons réduisent l'efficacité ou peuvent légèrement irriter." },
-      "low"    => { icon: "fa-circle-info",          label: "Interactions mineures", desc: "Ces combinaisons sont sûres mais peuvent être optimisées." }
-    } %>
-
-    <div class="flex flex-col gap-6">
-      <% %w[high medium low].each do |severity| %>
-        <% next unless @conflicts_by_severity[severity]&.any? %>
-        <% cfg = severity_config[severity] %>
-
-        <section>
-          <div class="flex items-center gap-3 mb-3">
-            <span style="font-size:1.1rem"><i class="fa-solid <%= cfg[:icon] %>"></i></span>
-            <div>
-              <% badge_class = { "high" => "conflict-count-badge conflict-count-badge--high", "medium" => "conflict-count-badge conflict-count-badge--medium", "low" => "conflict-count-badge conflict-count-badge--low" }[severity] %>
-              <h2 style="font-family:'DM Serif Display',serif; font-size:1rem; margin:0">
-                <%= cfg[:label] %>
-                <span class="<%= badge_class %>"><%= @conflicts_by_severity[severity].count %></span>
-              </h2>
-              <p class="text-muted text-sm mt-1 mb-0"><%= cfg[:desc] %></p>
-            </div>
-          </div>
-
-          <div class="flex flex-col gap-3">
-            <% @conflicts_by_severity[severity].each do |conflict| %>
-              <% card_class = { "high" => "conflict-card conflict-card--high", "medium" => "conflict-card conflict-card--medium", "low" => "conflict-card conflict-card--low" }[severity] %>
-              <div class="<%= card_class %>">
-                <div class="conflict-card__products">
-                  <span class="conflict-card__product">
-                    <i class="fa-solid fa-bottle-droplet"></i>
-                    <%= conflict[:user_product_a].product.name %>
-                    <em class="text-muted text-xs">(<%= conflict[:ingredient_a].name %>)</em>
-                  </span>
-                  <span class="conflict-card__separator"><i class="fa-solid fa-xmark"></i></span>
-                  <span class="conflict-card__product">
-                    <i class="fa-solid fa-bottle-droplet"></i>
-                    <%= conflict[:user_product_b].product.name %>
-                    <em class="text-muted text-xs">(<%= conflict[:ingredient_b].name %>)</em>
-                  </span>
-                </div>
-                <p class="conflict-card__message"><%= conflict[:message] %></p>
-                <div class="conflict-card__recommendation">
-                  <i class="fa-solid fa-lightbulb"></i>
-                  <span><%= conflict[:recommendation] %></span>
-                </div>
-                <div class="mt-3">
-                  <%= link_to chat_messages_path(q: "#{conflict[:ingredient_a].name} + #{conflict[:ingredient_b].name} : que faire ?"),
-                        class: "btn-glow btn-glow--outline btn-glow--sm" do %>
-                    Demander à l'IA <i class="fa-solid fa-arrow-right"></i>
-                  <% end %>
-                </div>
-              </div>
-            <% end %>
-          </div>
-        </section>
+      <%= link_to root_path, class: "conflicts-back-btn" do %>
+        <i class="fa-solid fa-arrow-left"></i>
+        <span>Retour au dashboard</span>
       <% end %>
     </div>
-  <% end %>
 
+    <% if @conflict_count == 0 %>
+
+      <!-- EMPTY STATE -->
+      <section class="conflicts-empty-card">
+        <div class="conflicts-empty-card__icon">
+          <i class="fa-solid fa-circle-check"></i>
+        </div>
+
+        <h2 class="conflicts-empty-card__title">
+          Aucun conflit détecté
+        </h2>
+
+        <p class="conflicts-empty-card__subtitle">
+          Excellente nouvelle : tous tes produits sont compatibles.
+          Ta routine est saine, cohérente et optimisée.
+        </p>
+
+        <%= link_to products_path, class: "conflicts-primary-btn" do %>
+          Voir ma collection
+        <% end %>
+      </section>
+
+    <% else %>
+
+      <% severity_config = {
+        "high" => {
+          icon: "fa-circle-exclamation",
+          label: "Conflits sérieux",
+          desc: "Ces combinaisons peuvent fragiliser ta barrière cutanée."
+        },
+        "medium" => {
+          icon: "fa-triangle-exclamation",
+          label: "Interactions modérées",
+          desc: "Ces associations peuvent réduire l’efficacité ou irriter."
+        },
+        "low" => {
+          icon: "fa-circle-info",
+          label: "Optimisations possibles",
+          desc: "Routine globalement saine, avec quelques ajustements utiles."
+        }
+      } %>
+
+      <div class="conflicts-sections">
+
+        <% %w[high medium low].each do |severity| %>
+          <% next unless @conflicts_by_severity[severity]&.any? %>
+          <% cfg = severity_config[severity] %>
+
+          <section class="conflicts-section">
+
+            <!-- SECTION HEADER -->
+            <div class="conflicts-section__header conflicts-section__header--<%= severity %>">
+              <div class="conflicts-section__icon">
+                <i class="fa-solid <%= cfg[:icon] %>"></i>
+              </div>
+
+              <div>
+                <div class="conflicts-section__title-row">
+                  <h2 class="conflicts-section__title">
+                    <%= cfg[:label] %>
+                  </h2>
+
+                  <span class="conflicts-badge conflicts-badge--<%= severity %>">
+                    <%= @conflicts_by_severity[severity].count %>
+                  </span>
+                </div>
+
+                <p class="conflicts-section__subtitle">
+                  <%= cfg[:desc] %>
+                </p>
+              </div>
+            </div>
+
+            <!-- CARDS -->
+            <div class="conflicts-grid">
+
+              <% @conflicts_by_severity[severity].each do |conflict| %>
+                <article class="conflict-card conflict-card--<%= severity %>">
+
+                  <div class="conflict-card__top">
+                    <div class="conflict-card__product">
+                      <div class="conflict-card__product-icon">
+                        <i class="fa-solid fa-bottle-droplet"></i>
+                      </div>
+
+                      <div>
+                        <p class="conflict-card__product-name">
+                          <%= conflict[:user_product_a].product.name %>
+                        </p>
+                        <span class="conflict-card__ingredient">
+                          <%= conflict[:ingredient_a].name %>
+                        </span>
+                      </div>
+                    </div>
+
+                    <div class="conflict-card__cross">
+                      <i class="fa-solid fa-xmark"></i>
+                    </div>
+
+                    <div class="conflict-card__product">
+                      <div class="conflict-card__product-icon">
+                        <i class="fa-solid fa-bottle-droplet"></i>
+                      </div>
+
+                      <div>
+                        <p class="conflict-card__product-name">
+                          <%= conflict[:user_product_b].product.name %>
+                        </p>
+                        <span class="conflict-card__ingredient">
+                          <%= conflict[:ingredient_b].name %>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="conflict-card__body">
+                    <div class="conflict-card__alert">
+                      <p><%= conflict[:message] %></p>
+                    </div>
+
+                    <div class="conflict-card__tip">
+                      <i class="fa-solid fa-lightbulb"></i>
+                      <span><%= conflict[:recommendation] %></span>
+                    </div>
+                  </div>
+
+                  <div class="conflict-card__footer">
+                    <%= link_to chat_messages_path(
+                          q: "#{conflict[:ingredient_a].name} + #{conflict[:ingredient_b].name} : que faire ?"
+                        ),
+                        class: "conflicts-secondary-btn" do %>
+                      <span>Demander à l’IA</span>
+                      <i class="fa-solid fa-arrow-right"></i>
+                    <% end %>
+                  </div>
+
+                </article>
+              <% end %>
+
+            </div>
+
+          </section>
+        <% end %>
+
+      </div>
+
+    <% end %>
+
+  </div>
 </div>

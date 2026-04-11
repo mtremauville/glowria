@@ -1,51 +1,61 @@
 <%# app/views/layouts/_navbar.html.erb %>
+<nav class="navbar" id="main-navbar">
+  <div class="navbar-inner">
 
-<%# ── Navbar desktop ── %>
-<nav class="navbar navbar-expand-lg">
-  <div class="container">
+    <%# ── Brand (lien vers accueil) ── %>
     <%= link_to root_path, class: "navbar-brand" do %>
-      <i class="fa-solid fa-leaf"></i> Glowria
+      <i class="fa-solid fa-leaf navbar-brand__icon"></i>
+      <span class="navbar-brand__name">Glowria</span>
     <% end %>
 
-    <div class="d-flex align-items-center gap-2">
-      <%= link_to root_path,          class: "nav-icon-btn #{'active' if current_page?(root_path)}",          title: "Dashboard" do %><i class="fa-solid fa-house"></i><% end %>
-      <%= link_to products_path,      class: "nav-icon-btn #{'active' if current_page?(products_path)}",      title: "Mes produits" do %><i class="fa-solid fa-bottle-droplet"></i><% end %>
-      <%= link_to conflicts_path,     class: "nav-icon-btn #{'active' if current_page?(conflicts_path)}",     title: "Interactions" do %><i class="fa-solid fa-triangle-exclamation"></i><% end %>
-      <%= link_to routines_path,      class: "nav-icon-btn #{'active' if current_page?(routines_path)}",      title: "Routines" do %><i class="fa-solid fa-clipboard-list"></i><% end %>
-      <%= link_to chat_messages_path, class: "nav-icon-btn #{'active' if current_page?(chat_messages_path)}", title: "Assistant IA" do %><i class="fa-solid fa-wand-magic-sparkles"></i><% end %>
-      <%= link_to destroy_user_session_path,
-            data: { turbo_method: :delete },
-            class: "nav-signout" do %>
-        <i class="fa-solid fa-right-from-bracket"></i> Déconnexion
-      <% end %>
-    </div>
+    <% if user_signed_in? %>
+      <%# ── Menu desktop ── %>
+      <ul class="navbar-menu" id="navbar-menu">
+        <li><%= link_to root_path,          class: "navbar-link #{'navbar-link--active' if current_page?(root_path)}"          do %><i class="fa-solid fa-house"></i><span>Accueil</span><% end %></li>
+        <li><%= link_to products_path,      class: "navbar-link #{'navbar-link--active' if current_page?(products_path)}"      do %><i class="fa-solid fa-bottle-droplet"></i><span>Produits</span><% end %></li>
+        <li><%= link_to conflicts_path,     class: "navbar-link #{'navbar-link--active' if current_page?(conflicts_path)}"     do %><i class="fa-solid fa-triangle-exclamation"></i><span>Interactions</span><% end %></li>
+        <li><%= link_to routines_path,      class: "navbar-link #{'navbar-link--active' if current_page?(routines_path)}"      do %><i class="fa-solid fa-clipboard-list"></i><span>Routines</span><% end %></li>
+        <li><%= link_to chat_messages_path, class: "navbar-link #{'navbar-link--active' if current_page?(chat_messages_path)}" do %><i class="fa-solid fa-wand-magic-sparkles"></i><span>Assistant IA</span><% end %></li>
+      </ul>
+
+      <%# ── Actions desktop ── %>
+      <div class="navbar-actions">
+        <%= link_to new_product_path, class: "navbar-add-btn" do %>
+          <i class="fa-solid fa-plus"></i><span>Ajouter</span>
+        <% end %>
+        <%= link_to destroy_user_session_path, data: { turbo_method: :delete }, class: "navbar-signout", title: "Déconnexion" do %>
+          <i class="fa-solid fa-right-from-bracket"></i>
+        <% end %>
+      </div>
+
+      <%# ── Burger (mobile uniquement) ── %>
+      <button class="navbar-burger" id="navbar-burger" aria-label="Menu" aria-expanded="false">
+        <i class="fa-solid fa-bars" id="burger-icon"></i>
+      </button>
+    <% end %>
+
   </div>
-</nav>
 
-<%# ── Bottom tab bar mobile ── %>
-<nav class="bottom-nav" aria-label="Navigation principale">
-  <%= link_to root_path, class: "bottom-nav__item #{'active' if current_page?(root_path)}" do %>
-    <span class="bottom-nav__icon"><i class="fa-solid fa-house"></i></span>
-    <span class="bottom-nav__label">Accueil</span>
-  <% end %>
+  <%# ── Drawer mobile ── %>
+  <% if user_signed_in? %>
+    <div class="navbar-drawer" id="navbar-drawer">
+      <div class="navbar-drawer__inner">
+        <%= link_to root_path,          class: "drawer-link #{'drawer-link--active' if current_page?(root_path)}"          do %><i class="fa-solid fa-house"></i> Accueil<% end %>
+        <%= link_to products_path,      class: "drawer-link #{'drawer-link--active' if current_page?(products_path)}"      do %><i class="fa-solid fa-bottle-droplet"></i> Produits<% end %>
+        <%= link_to conflicts_path,     class: "drawer-link #{'drawer-link--active' if current_page?(conflicts_path)}"     do %><i class="fa-solid fa-triangle-exclamation"></i> Interactions<% end %>
+        <%= link_to routines_path,      class: "drawer-link #{'drawer-link--active' if current_page?(routines_path)}"      do %><i class="fa-solid fa-clipboard-list"></i> Routines<% end %>
+        <%= link_to chat_messages_path, class: "drawer-link #{'drawer-link--active' if current_page?(chat_messages_path)}" do %><i class="fa-solid fa-wand-magic-sparkles"></i> Assistant IA<% end %>
+        <div class="drawer-divider"></div>
+        <%= link_to new_product_path, class: "drawer-link drawer-link--add" do %>
+          <i class="fa-solid fa-plus"></i> Ajouter un produit
+        <% end %>
+        <%= link_to destroy_user_session_path, data: { turbo_method: :delete }, class: "drawer-link drawer-link--signout" do %>
+          <i class="fa-solid fa-right-from-bracket"></i> Déconnexion
+        <% end %>
+      </div>
+    </div>
 
-  <%= link_to products_path, class: "bottom-nav__item #{'active' if current_page?(products_path)}" do %>
-    <span class="bottom-nav__icon"><i class="fa-solid fa-bottle-droplet"></i></span>
-    <span class="bottom-nav__label">Produits</span>
-  <% end %>
-
-  <%= link_to conflicts_path, class: "bottom-nav__item #{'active' if current_page?(conflicts_path)}" do %>
-    <span class="bottom-nav__icon"><i class="fa-solid fa-triangle-exclamation"></i></span>
-    <span class="bottom-nav__label">Conflits</span>
-  <% end %>
-
-  <%= link_to routines_path, class: "bottom-nav__item #{'active' if current_page?(routines_path)}" do %>
-    <span class="bottom-nav__icon"><i class="fa-solid fa-clipboard-list"></i></span>
-    <span class="bottom-nav__label">Routines</span>
-  <% end %>
-
-  <%= link_to chat_messages_path, class: "bottom-nav__item #{'active' if current_page?(chat_messages_path)}" do %>
-    <span class="bottom-nav__icon"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
-    <span class="bottom-nav__label">Chat IA</span>
+    <%# Overlay pour fermer le drawer en cliquant à côté %>
+    <div class="navbar-overlay" id="navbar-overlay"></div>
   <% end %>
 </nav>

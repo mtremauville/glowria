@@ -9,6 +9,12 @@ class ProductsController < ApplicationController
                                  .order(created_at: :desc)
   end
 
+  def show
+    @product = Product.includes(product_ingredients: :ingredient).find(params[:id])
+    @ingredients = @product.product_ingredients.includes(:ingredient).order(:position)
+    @active_ingredients = @ingredients.select { |pi| pi.ingredient.function.present? || pi.ingredient.benefits.present? }
+  end
+
   def new
     # Formulaire ajout manuel ou scan
   end

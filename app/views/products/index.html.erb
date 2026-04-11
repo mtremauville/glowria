@@ -29,10 +29,10 @@
               <div class="product-chip__placeholder"><i class="fa-solid fa-bottle-droplet"></i></div>
             <% end %>
 
-            <div class="product-chip__info">
+            <%= link_to product_path(up.product), class: "product-chip__info" do %>
               <span class="product-chip__name"><%= up.product.name %></span>
               <span class="product-chip__brand"><%= up.product.brand %><% if up.product.category.present? %> · <%= up.product.category %><% end %></span>
-            </div>
+            <% end %>
 
             <% slot_icons = { "morning" => "fa-sun", "evening" => "fa-moon", "both" => "fa-circle-half-stroke" } %>
             <% slot_labels = { "morning" => "Matin", "evening" => "Soir", "both" => "AM/PM" } %>

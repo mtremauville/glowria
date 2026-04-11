@@ -11,25 +11,23 @@
       <h1 class="db-hero__title">Ta peau mérite<br>le meilleur soin.</h1>
       <div class="db-hero__meta">
         <span class="db-meta-chip db-meta-chip--skin">
-          <i class="fa-solid fa-leaf"></i>
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.5"/><path d="M6 3v3l2 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
           Peau <%= current_user.skin_type&.humanize || "non renseignée" %>
         </span>
         <span class="db-meta-chip">
-          <i class="fa-solid fa-bottle-droplet"></i>
-          <%= @user_products.count %> produit<%= "s" if @user_products.count != 1 %>
+          <i class="fa-solid fa-bottle-droplet"></i> <%= @user_products.count %> produit<%= "s" if @user_products.count != 1 %>
         </span>
         <% high_count = @conflicts.count { |c| c[:severity] == "high" } %>
         <% if high_count > 0 %>
           <span class="db-meta-chip db-meta-chip--alert">
-            <i class="fa-solid fa-triangle-exclamation"></i>
-            <%= high_count %> conflit<%= "s" if high_count > 1 %>
+            <i class="fa-solid fa-triangle-exclamation"></i> <%= high_count %> conflit<%= "s" if high_count > 1 %>
           </span>
         <% end %>
       </div>
     </div>
     <div class="db-hero__actions">
       <%= link_to new_product_path, class: "db-cta-btn" do %>
-        <i class="fa-solid fa-plus"></i>
+        <span class="db-cta-btn__icon">＋</span>
         Ajouter un produit
       <% end %>
     </div>
@@ -71,11 +69,11 @@
     <div class="db-alerts">
       <% if high.any? %>
         <div class="db-alert db-alert--danger">
-          <div class="db-alert__icon"><i class="fa-solid fa-circle-exclamation"></i></div>
+          <div class="db-alert__icon"><i class="fa-solid fa-circle-xmark"></i></div>
           <div class="db-alert__body">
             <strong><%= high.count %> conflit<%= "s" if high.count > 1 %> sérieux</strong> détecté<%= "s" if high.count > 1 %> dans ta collection
           </div>
-          <%= link_to conflicts_path, class: "db-alert__cta" do %>Analyser <i class="fa-solid fa-arrow-right"></i><% end %>
+          <%= link_to "Analyser →", conflicts_path, class: "db-alert__cta" %>
         </div>
       <% end %>
       <% if medium.any? %>
@@ -84,7 +82,7 @@
           <div class="db-alert__body">
             <strong><%= medium.count %> interaction<%= "s" if medium.count > 1 %> modérée<%= "s" if medium.count > 1 %></strong> à surveiller
           </div>
-          <%= link_to conflicts_path, class: "db-alert__cta" do %>Voir <i class="fa-solid fa-arrow-right"></i><% end %>
+          <%= link_to "Voir →", conflicts_path, class: "db-alert__cta" %>
         </div>
       <% end %>
     </div>
@@ -96,7 +94,7 @@
   <div class="db-section">
     <div class="db-section__header">
       <h2 class="db-section__title">Mes routines</h2>
-      <%= link_to routines_path, class: "db-section__link" do %>Voir tout <i class="fa-solid fa-arrow-right"></i><% end %>
+      <%= link_to "Voir tout →", routines_path, class: "db-section__link" %>
     </div>
     <div class="db-routines">
       <% [
@@ -106,7 +104,7 @@
         <div class="db-routine-card <%= r[:gradient] %>">
           <div class="db-routine-card__header">
             <div>
-              <span class="db-routine-card__icon"><i class="fa-solid <%= r[:icon] %>"></i></span>
+              <i class="fa-solid <%= r[:icon] %> db-routine-card__icon"></i>
               <span class="db-routine-card__label"><%= r[:label] %></span>
             </div>
             <% if r[:routine] %>
@@ -132,16 +130,11 @@
           </div>
 
           <div class="db-routine-card__footer">
-            <%= button_to generate_routine_path(r[:routine] || 0),
+            <%= button_to r[:routine] ? "↻ Régénérer" : "✨ Générer",
+                  generate_routine_path(r[:routine] || 0),
                   method: :post,
                   class: "db-routine-card__btn",
-                  form: { "data-turbo" => "false" } do %>
-              <% if r[:routine] %>
-                <i class="fa-solid fa-rotate"></i> Régénérer
-              <% else %>
-                <i class="fa-solid fa-wand-magic-sparkles"></i> Générer
-              <% end %>
-            <% end %>
+                  form: { "data-turbo" => "false" } %>
           </div>
         </div>
       <% end %>
@@ -154,7 +147,7 @@
   <div class="db-section">
     <div class="db-section__header">
       <h2 class="db-section__title">Ma collection</h2>
-      <%= link_to products_path, class: "db-section__link" do %>Tout voir <i class="fa-solid fa-arrow-right"></i><% end %>
+      <%= link_to "Tout voir →", products_path, class: "db-section__link" %>
     </div>
 
     <% if @user_products.any? %>
@@ -168,10 +161,10 @@
                 <span class="db-product-card__emoji"><i class="fa-solid fa-bottle-droplet"></i></span>
               <% end %>
             </div>
-            <% slot_icons = { "morning" => "fa-sun", "evening" => "fa-moon", "both" => "fa-circle-half-stroke" } %>
             <% slot_class = { "morning" => "slot-pill--morning", "evening" => "slot-pill--evening", "both" => "slot-pill--both" }.fetch(up.usage_slot.to_s, "slot-pill--both") %>
+            <% slot_icons_db = { "morning" => "fa-sun", "evening" => "fa-moon", "both" => "fa-circle-half-stroke" } %>
             <span class="slot-pill <%= slot_class %> db-product-card__slot">
-              <i class="fa-solid <%= slot_icons.fetch(up.usage_slot.to_s, 'fa-circle-half-stroke') %>"></i>
+              <i class="fa-solid <%= slot_icons_db.fetch(up.usage_slot.to_s, 'fa-circle-half-stroke') %>"></i>
             </span>
             <div class="db-product-card__info">
               <p class="db-product-card__name"><%= up.product.name %></p>
@@ -191,9 +184,7 @@
         <div class="db-empty__icon"><i class="fa-solid fa-bottle-droplet"></i></div>
         <p class="db-empty__title">Ta collection est vide</p>
         <p class="db-empty__sub">Commence par ajouter tes premiers produits.</p>
-        <%= link_to new_product_path, class: "db-cta-btn db-cta-btn--sm" do %>
-          <i class="fa-solid fa-plus"></i> Ajouter un produit
-        <% end %>
+        <%= link_to "＋ Ajouter un produit", new_product_path, class: "db-cta-btn db-cta-btn--sm" %>
       </div>
     <% end %>
   </div>
@@ -216,7 +207,7 @@
         </p>
       </div>
       <%= link_to chat_messages_path, class: "db-ai-banner__btn" do %>
-        Ouvrir le chat <i class="fa-solid fa-arrow-right"></i>
+        Ouvrir le chat <span>→</span>
       <% end %>
     </div>
   </div>

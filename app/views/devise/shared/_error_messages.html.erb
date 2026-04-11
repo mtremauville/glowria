@@ -1,0 +1,12 @@
+<% if resource.errors.any? %>
+  <div class="auth-errors" data-turbo-temporary>
+    <strong><i class="fa-solid fa-circle-exclamation"></i>
+      <%= resource.errors.count %> erreur<%= resource.errors.count > 1 ? "s" : "" %> :
+    </strong>
+    <ul>
+      <% resource.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

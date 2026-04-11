@@ -1,66 +1,531 @@
-<%# app/views/chat_messages/index.html.erb %>
-<div class="chat-container" data-controller="chat">
+<style>
+  .chat-page {
+  min-height: 100vh;
+  background: #F7F4EF;
+  font-family: "Geologica", sans-serif;
+}
 
-  <%# Zone des messages %>
-  <div class="chat-messages" data-chat-target="messages">
+.chat-shell {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  min-height: 100vh;
+}
 
-    <% if @messages.empty? %>
-      <div class="chat-welcome">
-        <span style="font-size:2.8rem; display:block; margin-bottom:.75rem">
-          <i class="fa-solid fa-wand-magic-sparkles"></i>
-        </span>
-        <p class="chat-welcome__title">Ton assistante skincare</p>
-        <p class="text-muted text-sm">Pose-moi une question sur tes produits, les interactions ou ta routine.</p>
-        <div class="chat-suggestions">
-          <% [
-            "Puis-je utiliser le rétinol avec de la vitamine C ?",
-            "Quelle est ma routine optimale ce soir ?",
-            "Quels produits sont déconseillés après le soleil ?"
-          ].each do |suggestion| %>
-            <button class="chat-suggestion-btn"
+/* SIDEBAR */
+
+.chat-sidebar {
+  background: linear-gradient(
+      rgba(45, 34, 24, 0.2),
+      rgba(45, 34, 24, 0.45)
+    ),
+    url("https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1400&q=80");
+  background-size: cover;
+  background-position: center;
+  color: white;
+  padding: 4rem 3rem;
+  display: flex;
+}
+
+.chat-sidebar__inner {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.chat-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+
+.chat-sidebar__eyebrow,
+.chat-header__eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.75rem;
+  opacity: 0.8;
+  margin-bottom: 1rem;
+}
+
+.chat-sidebar__title {
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(2.8rem, 4vw, 4.2rem);
+  line-height: 0.95;
+  font-weight: 400;
+  font-style: italic;
+  margin-bottom: 2rem;
+}
+
+.chat-sidebar__subtitle {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  opacity: 0.95;
+  margin-bottom: 3rem;
+}
+
+.chat-sidebar__features {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.chat-feature {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* MAIN */
+
+.chat-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.chat-panel {
+  width: 100%;
+  max-width: 1100px;
+  height: calc(100vh - 4rem);
+  background: rgba(255,255,255,0.82);
+  backdrop-filter: blur(20px);
+  border-radius: 32px;
+  border: 1px solid rgba(90, 75, 60, 0.08);
+  box-shadow: 0 20px 60px rgba(53, 37, 20, 0.08);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* HEADER */
+
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem 2.5rem;
+  border-bottom: 1px solid rgba(90, 75, 60, 0.08);
+}
+
+.chat-header__title {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 2.2rem;
+  color: #1C1916;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.chat-header__status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #6d6258;
+  font-size: 0.95rem;
+}
+
+.chat-status-dot {
+  width: 10px;
+  height: 10px;
+  background: #8fc88a;
+  border-radius: 50%;
+}
+
+/* MESSAGES */
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.chat-welcome {
+  max-width: 720px;
+  margin: auto;
+  text-align: center;
+}
+
+.chat-welcome__icon {
+  width: 90px;
+  height: 90px;
+  margin: 0 auto 2rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f4e7dc, #ede4d9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8b735d;
+  font-size: 2rem;
+}
+
+.chat-welcome__title {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 2.8rem;
+  color: #1C1916;
+  margin-bottom: 1rem;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.chat-welcome__subtitle {
+  color: #7a6d61;
+  line-height: 1.8;
+  max-width: 600px;
+  margin: 0 auto 2.5rem;
+}
+
+.chat-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.chat-suggestion-btn {
+  border: 1px solid #ddd4ca;
+  background: rgba(255,255,255,0.9);
+  border-radius: 999px;
+  padding: 1rem 1.4rem;
+  color: #3b3128;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.chat-suggestion-btn:hover {
+  transform: translateY(-2px);
+  border-color: #bcae9e;
+  background: white;
+}
+
+/* CHAT BUBBLES */
+
+.chat-message {
+  display: flex;
+  gap: 1rem;
+  max-width: 75%;
+}
+
+.chat-message--user {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.chat-message__avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #f1ebe5;
+  color: #7a6d61;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.chat-message__bubble {
+  padding: 1.2rem 1.4rem;
+  border-radius: 24px;
+  line-height: 1.7;
+  font-size: 0.98rem;
+}
+
+.chat-message--assistant .chat-message__bubble {
+  background: #f5f1ec;
+  color: #1C1916;
+  border-top-left-radius: 8px;
+}
+
+.chat-message--user .chat-message__bubble {
+  background: #1C1916;
+  color: white;
+  border-top-right-radius: 8px;
+}
+
+/* TYPING */
+
+.chat-typing {
+  display: flex;
+  gap: 8px;
+  padding-left: 60px;
+}
+
+.chat-typing span {
+  width: 8px;
+  height: 8px;
+  background: #b8a999;
+  border-radius: 50%;
+  animation: blink 1.4s infinite;
+}
+
+.chat-typing span:nth-child(2) {
+  animation-delay: .2s;
+}
+
+.chat-typing span:nth-child(3) {
+  animation-delay: .4s;
+}
+
+@keyframes blink {
+  0%, 80%, 100% { opacity: .3; }
+  40% { opacity: 1; }
+}
+
+/* INPUT */
+
+.chat-form {
+  padding: 2rem;
+  border-top: 1px solid rgba(90, 75, 60, 0.08);
+  background: rgba(255,255,255,0.7);
+}
+
+.chat-form__wrapper {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  background: #fcfaf8;
+  border: 1px solid #ddd4ca;
+  border-radius: 24px;
+  padding: 1rem;
+  width: 100%;
+}
+
+.chat-form__wrapper:focus-within {
+  border-color: #8b735d;
+  box-shadow: 0 0 0 4px rgba(139, 115, 93, 0.08);
+}
+
+.chat-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  resize: none;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #1C1916;
+  max-height: 140px;
+}
+
+.chat-input:focus {
+  outline: none;
+}
+
+.chat-submit {
+  width: 54px;
+  height: 54px;
+  border: none;
+  border-radius: 50%;
+  background: #1C1916;
+  color: white;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.chat-submit:hover {
+  transform: scale(1.04);
+  background: #1e1712;
+}
+
+/* MOBILE */
+
+@media (max-width: 1024px) {
+  .chat-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .chat-sidebar {
+    display: none;
+  }
+
+  .chat-main {
+    padding: 1rem;
+  }
+
+  .chat-panel {
+    height: calc(100vh - 2rem);
+    border-radius: 24px;
+  }
+
+  .chat-header {
+    padding: 1.5rem;
+  }
+
+  .chat-header__title {
+    font-size: 2rem;
+  }
+
+  .chat-messages {
+    padding: 1.5rem;
+  }
+
+  .chat-message {
+    max-width: 90%;
+  }
+
+  .chat-form {
+    padding: 1rem;
+  }
+}
+  </style>
+<div class="chat-page" data-controller="chat">
+  <div class="chat-shell">
+
+    <!-- LEFT SIDEBAR / BRAND -->
+    <aside class="chat-sidebar">
+      <div class="chat-sidebar__inner">
+
+        <div class="chat-logo">
+          <i class="fa-solid fa-leaf"></i>
+          <span>Glowria</span>
+        </div>
+
+        <div class="chat-sidebar__content">
+          <p class="chat-sidebar__eyebrow">ASSISTANTE IA</p>
+
+          <h1 class="chat-sidebar__title">
+            Ton experte<br>
+            skincare<br>
+            au quotidien.
+          </h1>
+
+          <p class="chat-sidebar__subtitle">
+            Analyse tes ingrédients, optimise tes routines et
+            évite les mauvaises associations grâce à une IA pensée
+            pour ta peau.
+          </p>
+
+          <div class="chat-sidebar__features">
+            <div class="chat-feature">
+              <i class="fa-solid fa-circle-check"></i>
+              <span>Analyse d’actifs & conflits</span>
+            </div>
+
+            <div class="chat-feature">
+              <i class="fa-solid fa-circle-check"></i>
+              <span>Routine personnalisée matin / soir</span>
+            </div>
+
+            <div class="chat-feature">
+              <i class="fa-solid fa-circle-check"></i>
+              <span>Conseils après soleil, irritation, etc.</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- CHAT AREA -->
+    <main class="chat-main">
+      <div class="chat-panel">
+
+        <div class="chat-header">
+          <div>
+            <p class="chat-header__eyebrow">GLOWRIA AI</p>
+            <h2 class="chat-header__title">Assistant Skincare</h2>
+          </div>
+
+          <div class="chat-header__status">
+            <span class="chat-status-dot"></span>
+            En ligne
+          </div>
+        </div>
+
+        <div class="chat-messages" data-chat-target="messages">
+
+          <% if @messages.empty? %>
+            <div class="chat-welcome">
+
+              <div class="chat-welcome__icon">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+              </div>
+
+              <p class="chat-welcome__title">
+                Pose ta première question
+              </p>
+
+              <p class="chat-welcome__subtitle">
+                Je t’aide à comprendre tes produits,
+                éviter les irritations et créer la meilleure routine.
+              </p>
+
+              <div class="chat-suggestions">
+                <% [
+                  "Puis-je utiliser le rétinol avec de la vitamine C ?",
+                  "Quelle est ma routine optimale ce soir ?",
+                  "Quels produits éviter après le soleil ?"
+                ].each do |suggestion| %>
+                  <button
+                    type="button"
+                    class="chat-suggestion-btn"
                     data-action="click->chat#send"
                     data-message="<%= suggestion %>">
-              <%= suggestion %>
-            </button>
-          <% end %>
-        </div>
-      </div>
+                    <%= suggestion %>
+                  </button>
+                <% end %>
+              </div>
 
-    <% else %>
-      <% @messages.each do |msg| %>
-        <% msg_class = msg.role == "user" ? "chat-message chat-message--user" : "chat-message chat-message--assistant" %>
-        <div class="<%= msg_class %>">
-          <div class="chat-message__avatar">
-            <% if msg.role == "user" %>
-              <i class="fa-solid fa-user"></i>
-            <% else %>
-              <i class="fa-solid fa-wand-magic-sparkles"></i>
+            </div>
+
+          <% else %>
+
+            <% @messages.each do |msg| %>
+              <% msg_class = msg.role == "user" ? "chat-message chat-message--user" : "chat-message chat-message--assistant" %>
+
+              <div class="<%= msg_class %>">
+
+                <div class="chat-message__avatar">
+                  <% if msg.role == "user" %>
+                    <i class="fa-solid fa-user"></i>
+                  <% else %>
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                  <% end %>
+                </div>
+
+                <div class="chat-message__bubble">
+                  <%= simple_format(msg.content) %>
+                </div>
+
+              </div>
             <% end %>
-          </div>
-          <div class="chat-message__bubble"><%= msg.content %></div>
-        </div>
-      <% end %>
-    <% end %>
 
-    <%# Indicateur de frappe %>
-    <div class="chat-typing" data-chat-target="typing" hidden>
-      <span></span><span></span><span></span>
-    </div>
+          <% end %>
+
+          <div class="chat-typing" data-chat-target="typing" hidden>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+
+        </div>
+
+        <form class="chat-form" data-action="submit->chat#send">
+
+          <div class="chat-form__wrapper">
+            <textarea
+              data-chat-target="input"
+              data-action="keydown->chat#handleKeydown"
+              placeholder="Pose ta question skincare…"
+              rows="1"
+              class="chat-input"
+            ></textarea>
+
+            <button
+              type="submit"
+              data-chat-target="submit"
+              class="chat-submit">
+              <i class="fa-solid fa-paper-plane"></i>
+            </button>
+          </div>
+
+        </form>
+
+      </div>
+    </main>
 
   </div>
-
-  <%# Formulaire de saisie %>
-  <form class="chat-form" data-action="submit->chat#send">
-    <textarea
-      data-chat-target="input"
-      data-action="keydown->chat#handleKeydown"
-      placeholder="Pose ta question skincare…"
-      rows="1"
-      class="chat-input"
-    ></textarea>
-    <button type="submit" data-chat-target="submit" class="chat-submit">
-      <i class="fa-solid fa-paper-plane"></i>
-    </button>
-  </form>
-
 </div>

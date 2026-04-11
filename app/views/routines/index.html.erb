@@ -3,7 +3,9 @@
 
   <div class="page-header">
     <div>
-      <h1 class="page-header__title">Mes routines</h1>
+      <%= link_to root_path, class: "page-header__title-link" do %>
+        <h1 class="page-header__title">Mes routines</h1>
+      <% end %>
       <p class="page-header__sub">Générées par l'IA selon ta collection et ton type de peau</p>
     </div>
     <%= button_to generate_routine_path(0),
