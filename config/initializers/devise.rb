@@ -299,6 +299,14 @@ Devise.setup do |config|
   # so you need to do it manually. For the users scope, it would be:
   # config.omniauth_path_prefix = '/my_engine/users/auth'
 
+  # ==> Google OAuth2 (ignoré si les credentials ne sont pas configurés)
+  if ENV["GOOGLE_CLIENT_ID"].present? && ENV["GOOGLE_CLIENT_SECRET"].present?
+    config.omniauth :google_oauth2,
+      ENV["GOOGLE_CLIENT_ID"],
+      ENV["GOOGLE_CLIENT_SECRET"],
+      scope: "email,profile"
+  end
+
   # ==> Hotwire/Turbo configuration
   # When using Devise with Hotwire/Turbo, the http status for error responses
   # and some redirects must match the following. The default in Devise for existing

@@ -30,62 +30,66 @@
       Prends en photo la liste d'ingrédients sur l'emballage. L'IA extrait automatiquement la composition.
     </p>
 
-    <%# Bouton principal caméra %>
-    <button type="button"
-            class="scan-camera-btn"
-            data-action="click->composition-scanner#openCamera">
-      <i class="fa-solid fa-camera"></i>
-      <span>Prendre une photo</span>
-    </button>
+    <div class="add-section__body">
 
-    <%# Fallback file input (utilisé si getUserMedia échoue) %>
-    <input type="file"
-           accept="image/*"
-           data-composition-scanner-target="fileInput"
-           data-action="change->composition-scanner#onFileSelected"
-           class="sr-only">
-
-    <%# Vue caméra live (getUserMedia) %>
-    <div data-composition-scanner-target="cameraView" hidden class="scan-camera-view">
-      <video data-composition-scanner-target="video"
-             class="scan-video" playsinline muted autoplay></video>
-      <canvas data-composition-scanner-target="canvas" hidden></canvas>
+      <%# Bouton principal caméra %>
       <button type="button"
-              class="scan-capture-btn"
-              data-action="click->composition-scanner#capturePhoto">
-        <i class="fa-solid fa-circle-dot"></i>
-        Capturer
+              class="scan-camera-btn"
+              data-action="click->composition-scanner#openCamera">
+        <i class="fa-solid fa-camera"></i>
+        <span>Prendre une photo</span>
       </button>
-      <button type="button"
-              class="scan-close-btn"
-              data-action="click->composition-scanner#closeCamera">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-    </div>
 
-    <%# Preview photo ── %>
-    <div data-composition-scanner-target="preview" hidden class="scan-preview">
-      <img data-composition-scanner-target="previewImg" alt="Aperçu" class="scan-preview__img">
-      <button type="button"
-              class="scan-analyze-btn"
-              data-composition-scanner-target="analyzeBtn"
-              data-action="click->composition-scanner#analyze"
-              disabled>
-        <i class="fa-solid fa-wand-magic-sparkles"></i>
-        Analyser la composition
-      </button>
-    </div>
+      <%# Fallback file input (utilisé si getUserMedia échoue) %>
+      <input type="file"
+             accept="image/*"
+             data-composition-scanner-target="fileInput"
+             data-action="change->composition-scanner#onFileSelected"
+             class="sr-only">
 
-    <%# Status message %>
-    <div data-composition-scanner-target="status" hidden class="scan-status"></div>
-
-    <%# Résultats extraits %>
-    <div data-composition-scanner-target="result" hidden class="scan-result">
-      <div class="scan-result__header">
-        <i class="fa-solid fa-list-check"></i>
-        <span data-composition-scanner-target="ingredientsCount"></span>
+      <%# Vue caméra live (getUserMedia) %>
+      <div data-composition-scanner-target="cameraView" hidden class="scan-camera-view">
+        <video data-composition-scanner-target="video"
+               class="scan-video" playsinline muted autoplay></video>
+        <canvas data-composition-scanner-target="canvas" hidden></canvas>
+        <button type="button"
+                class="scan-capture-btn"
+                data-action="click->composition-scanner#capturePhoto">
+          <i class="fa-solid fa-circle-dot"></i>
+          Capturer
+        </button>
+        <button type="button"
+                class="scan-close-btn"
+                data-action="click->composition-scanner#closeCamera">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
       </div>
-      <div data-composition-scanner-target="ingredientsList" class="scan-result__list"></div>
+
+      <%# Preview photo ── %>
+      <div data-composition-scanner-target="preview" hidden class="scan-preview">
+        <img data-composition-scanner-target="previewImg" alt="Aperçu" class="scan-preview__img">
+        <button type="button"
+                class="scan-analyze-btn"
+                data-composition-scanner-target="analyzeBtn"
+                data-action="click->composition-scanner#analyze"
+                disabled>
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          Analyser la composition
+        </button>
+      </div>
+
+      <%# Status message %>
+      <div data-composition-scanner-target="status" hidden class="scan-status"></div>
+
+      <%# Résultats extraits %>
+      <div data-composition-scanner-target="result" hidden class="scan-result">
+        <div class="scan-result__header">
+          <i class="fa-solid fa-list-check"></i>
+          <span data-composition-scanner-target="ingredientsCount"></span>
+        </div>
+        <div data-composition-scanner-target="ingredientsList" class="scan-result__list"></div>
+      </div>
+
     </div>
 
     <%# Formulaire de confirmation (après scan réussi) %>

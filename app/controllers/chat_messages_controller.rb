@@ -8,21 +8,23 @@ class ChatMessagesController < ApplicationController
 
   def create
     user_message = params[:message].to_s.strip
-    return head :bad_request if user_message.blank?
+    image        = params[:image]
 
-    response.headers["Content-Type"]  = "text/event-stream"
-    response.headers["Cache-Control"] = "no-cache"
-    response.headers["X-Accel-Buffering"] = "no"  # désactive le buffer nginx
+    return head :bad_request if user_message.blank? && image.blank?
+
+    response.headers["Content-Type"]     = "text/event-stream"
+    response.headers["Cache-Control"]    = "no-cache"
+    response.headers["X-Accel-Buffering"] = "no"
 
     sse = SSE.new(response.stream, retry: 300)
 
     begin
-      SkincareChatService.new(current_user).chat(user_message) do |token|
+      SkincareChatService.new(current_user).chat(user_message, image: image) do |token|
         sse.write({ token: token }.to_json, event: "token")
       end
       sse.write({}.to_json, event: "done")
     rescue ActionController::Live::ClientDisconnected
-      # client a fermé la connexion, pas grave
+      # client a fermé la connexion
     ensure
       sse.close
     end

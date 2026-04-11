@@ -38,5 +38,8 @@ module Glowria
 
     # Don't generate system test files.
     config.generators.system_tests = nil
+
+    # ImageMagick via mini_magick (libvips non installé)
+    config.active_storage.variant_processor = :mini_magick
   end
 end

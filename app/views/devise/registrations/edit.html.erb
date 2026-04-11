@@ -1,42 +1,117 @@
-<h2>Edit <%= resource_name.to_s.humanize %></h2>
+<div class="container" style="max-width: 560px">
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
-
-  <div class="field">
-    <p><%= f.label :email %></p>
-    <p><%= f.email_field :email, autofocus: true, autocomplete: "email" %></p>
-  </div>
-
-  <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
-    <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
+  <%= link_to profile_path, class: "prod-back" do %>
+    <i class="fa-solid fa-arrow-left"></i> Mon profil
   <% end %>
 
-  <div class="field">
-    <p><%= f.label :password %> <i>(leave blank if you don't want to change it)</i></p>
-    <p><%= f.password_field :password, autocomplete: "new-password" %></p>
-    <% if @minimum_password_length %>
-      <p><em><%= @minimum_password_length %> characters minimum</em></p>
-    <% end %>
+  <div class="add-product-header">
+    <h1 class="add-product-header__title">Compte &amp; sécurité</h1>
+    <p class="add-product-header__sub">Modifie ton adresse e-mail ou ton mot de passe.</p>
   </div>
 
-  <div class="field">
-    <p><%= f.label :password_confirmation %></p>
-    <p><%= f.password_field :password_confirmation, autocomplete: "new-password" %></p>
-  </div>
+  <%= render "devise/shared/error_messages", resource: resource %>
 
-  <div class="field">
-    <p><%= f.label :current_password %> <i>(we need your current password to confirm your changes)</i></p>
-    <p><%= f.password_field :current_password, autocomplete: "current-password" %></p>
-  </div>
+  <%= form_for(resource, as: resource_name, url: registration_path(resource_name),
+        html: { method: :put }) do |f| %>
 
-  <div class="actions">
-    <%= f.submit "Update" %>
-  </div>
-<% end %>
+    <%# ── E-mail ── %>
+    <div class="add-section" style="margin-bottom: 1rem">
+      <div class="add-section__header">
+        <div class="add-section__label">
+          <i class="fa-solid fa-envelope"></i>
+          Adresse e-mail
+        </div>
+      </div>
+      <div class="add-section__body" style="display: flex; flex-direction: column; gap: 1rem">
+        <div class="add-form-group">
+          <%= f.label :email, "Nouvel e-mail", class: "add-form-label" %>
+          <%= f.email_field :email, autofocus: true, autocomplete: "email",
+                class: "add-form-input" %>
+        </div>
 
-<h3>Cancel my account</h3>
+        <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+          <p style="font-size: 0.82rem; color: var(--text-muted)">
+            En attente de confirmation pour : <strong><%= resource.unconfirmed_email %></strong>
+          </p>
+        <% end %>
+      </div>
+    </div>
 
-<div>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?", turbo_confirm: "Are you sure?" }, method: :delete %></div>
+    <%# ── Mot de passe ── %>
+    <div class="add-section" style="margin-bottom: 1rem">
+      <div class="add-section__header">
+        <div class="add-section__label">
+          <i class="fa-solid fa-lock"></i>
+          Mot de passe
+        </div>
+      </div>
+      <div class="add-section__body" style="display: flex; flex-direction: column; gap: 1rem">
 
-<%= link_to "Back", :back %>
+        <div class="add-form-group">
+          <div class="add-form-label-row">
+            <%= f.label :password, "Nouveau mot de passe", class: "add-form-label" %>
+            <% if @minimum_password_length %>
+              <span style="font-size: 0.75rem; color: var(--text-muted)"><%= @minimum_password_length %> car. min.</span>
+            <% end %>
+          </div>
+          <%= f.password_field :password, autocomplete: "new-password",
+                placeholder: "Laisser vide pour ne pas changer",
+                class: "add-form-input" %>
+        </div>
+
+        <div class="add-form-group">
+          <%= f.label :password_confirmation, "Confirmer le nouveau mot de passe", class: "add-form-label" %>
+          <%= f.password_field :password_confirmation, autocomplete: "new-password",
+                placeholder: "••••••••", class: "add-form-input" %>
+        </div>
+
+      </div>
+    </div>
+
+    <%# ── Mot de passe actuel (requis pour confirmer) ── %>
+    <div class="add-section" style="margin-bottom: 1.5rem">
+      <div class="add-section__header">
+        <div class="add-section__label">
+          <i class="fa-solid fa-shield-halved"></i>
+          Confirmation
+        </div>
+      </div>
+      <div class="add-section__body">
+        <div class="add-form-group">
+          <%= f.label :current_password, "Mot de passe actuel", class: "add-form-label" %>
+          <%= f.password_field :current_password, autocomplete: "current-password",
+                placeholder: "Requis pour valider les modifications",
+                class: "add-form-input" %>
+        </div>
+      </div>
+    </div>
+
+    <%= f.submit "Enregistrer les modifications", class: "add-submit-btn" %>
+
+  <% end %>
+
+  <%# ── Supprimer le compte ── %>
+  <details class="add-section add-section--collapsible" style="margin-top: 2rem; border-color: #f5c4c4">
+    <summary class="add-section__summary">
+      <div class="add-section__label" style="color: #c0392b">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        Supprimer mon compte
+      </div>
+      <i class="fa-solid fa-chevron-down add-section__chevron"></i>
+    </summary>
+    <div class="add-section__body">
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; line-height: 1.6">
+        Cette action est irréversible. Toutes tes données (produits, routines, messages) seront définitivement supprimées.
+      </p>
+      <%= button_to "Supprimer définitivement mon compte",
+            registration_path(resource_name),
+            data: { turbo_confirm: "Es-tu sûr(e) ? Cette action est irréversible." },
+            method: :delete,
+            class: "add-submit-btn",
+            style: "background: #c0392b; border-color: #c0392b" %>
+    </div>
+  </details>
+
+  <div style="padding-bottom: 3rem"></div>
+
+</div>

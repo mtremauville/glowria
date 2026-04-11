@@ -14,15 +14,19 @@ class SkincareChatService
     @user = user
   end
 
-  def chat(user_message, &block)
-    @user.chat_messages.create!(role: "user", content: user_message)
+  def chat(user_message, image: nil, &block)
+    stored_content = user_message.presence || "📷 Photo envoyée"
+    @user.chat_messages.create!(role: "user", content: stored_content)
 
     full_response = ""
 
     chat_instance = RubyLLM.chat(model: MODEL)
     chat_instance.with_instructions(SYSTEM_PROMPT + "\n\n" + user_context)
 
-    chat_instance.ask(user_message) do |chunk|
+    prompt   = user_message.presence || "Analyse cette photo de produit ou d'emballage et donne ton avis skincare."
+    ask_opts = image ? { with: image } : {}
+
+    chat_instance.ask(prompt, **ask_opts) do |chunk|
       token = chunk.content.to_s
       next if token.blank?
       full_response += token

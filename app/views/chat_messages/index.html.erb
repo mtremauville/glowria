@@ -330,6 +330,78 @@
   background: #1e1712;
 }
 
+/* CAMERA BUTTON */
+
+.chat-camera-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  color: #8b735d;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1rem;
+  transition: background 0.15s;
+}
+.chat-camera-btn:hover { background: #f1ebe5; }
+.chat-camera-btn--active { color: #1C1916; background: #f1ebe5; }
+
+/* PHOTO PREVIEW (dans le formulaire) */
+
+.chat-photo-preview {
+  position: relative;
+  display: inline-flex;
+  margin: 0 1rem 0.75rem;
+}
+.chat-photo-preview__img {
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 2px solid #ddd4ca;
+}
+.chat-photo-remove {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 22px;
+  height: 22px;
+  background: #1C1916;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 0.6rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* CAMERA VIEW (dans le formulaire) */
+
+.chat-camera-view {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: #000;
+  overflow: hidden;
+  border-radius: 16px;
+  margin-bottom: 0.75rem;
+}
+
+/* PHOTO dans une bulle utilisateur */
+
+.chat-message__photo {
+  display: block;
+  max-width: 200px;
+  border-radius: 12px;
+  margin-bottom: 0.4rem;
+}
+
 /* MOBILE */
 
 @media (max-width: 1024px) {
@@ -371,7 +443,9 @@
   }
 }
   </style>
-<div class="chat-page" data-controller="chat">
+<div class="chat-page"
+     data-controller="chat"
+     data-chat-avatar-url-value="<%= current_user.avatar.attached? ? url_for(current_user.avatar.variant(resize_to_fill: [44, 44])) : '' %>">
   <div class="chat-shell">
 
     <!-- LEFT SIDEBAR / BRAND -->
@@ -480,7 +554,12 @@
 
                 <div class="chat-message__avatar">
                   <% if msg.role == "user" %>
-                    <i class="fa-solid fa-user"></i>
+                    <% if current_user.avatar.attached? %>
+                      <%= image_tag current_user.avatar.variant(resize_to_fill: [44, 44]),
+                            class: "chat-avatar-img", alt: "" %>
+                    <% else %>
+                      <i class="fa-solid fa-user"></i>
+                    <% end %>
                   <% else %>
                     <i class="fa-solid fa-wand-magic-sparkles"></i>
                   <% end %>
@@ -505,7 +584,43 @@
 
         <form class="chat-form" data-action="submit->chat#send">
 
+          <%# Preview photo sélectionnée %>
+          <div data-chat-target="photoPreview" hidden class="chat-photo-preview">
+            <img data-chat-target="photoImg" alt="" class="chat-photo-preview__img">
+            <button type="button"
+                    class="chat-photo-remove"
+                    data-action="click->chat#removePhoto"
+                    title="Supprimer la photo">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+
+          <%# Vue caméra live %>
+          <div data-chat-target="cameraView" hidden class="chat-camera-view">
+            <video data-chat-target="video" playsinline muted autoplay class="scan-video"></video>
+            <canvas data-chat-target="canvas" hidden></canvas>
+            <button type="button"
+                    class="scan-capture-btn"
+                    data-action="click->chat#capturePhoto">
+              <i class="fa-solid fa-circle-dot"></i>
+              Capturer
+            </button>
+            <button type="button"
+                    class="scan-close-btn"
+                    data-action="click->chat#closeCamera">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+
           <div class="chat-form__wrapper">
+            <button type="button"
+                    class="chat-camera-btn"
+                    data-chat-target="cameraBtn"
+                    data-action="click->chat#openCamera"
+                    title="Envoyer une photo">
+              <i class="fa-solid fa-camera"></i>
+            </button>
+
             <textarea
               data-chat-target="input"
               data-action="keydown->chat#handleKeydown"

@@ -1,6 +1,6 @@
 # config/routes.rb
 Rails.application.routes.draw do
-  devise_for :users
+  devise_for :users, controllers: { omniauth_callbacks: "omniauth_callbacks" }
 
   root "dashboard#index"
 
@@ -26,6 +26,10 @@ Rails.application.routes.draw do
 
   resources :conflicts, only: [:index]
   resources :chat_messages, only: [:index, :create]
+
+  resource :profile, only: [:show, :update] do
+    delete :avatar, on: :member
+  end
 
   get "/onboarding", to: "onboarding#show"
   patch "/onboarding", to: "onboarding#update"
