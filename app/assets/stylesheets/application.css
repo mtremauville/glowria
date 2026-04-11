@@ -2703,6 +2703,433 @@ body {
 }
 
 /* ============================================================
+   ADD PRODUCT — new.html.erb
+   ============================================================ */
+
+.add-product-header { padding: 0.25rem 0 2rem; border-bottom: 1px solid var(--cream-border); margin-bottom: 2rem; }
+.add-product-header__title { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 400; color: var(--text-primary); }
+.add-product-header__sub { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.3rem; }
+
+/* ── Section card ── */
+.add-section {
+  background: var(--white);
+  border: 1px solid var(--cream-border);
+  margin-bottom: 1rem;
+}
+
+.add-section__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.1rem 1.25rem;
+  border-bottom: 1px solid var(--cream-border);
+}
+
+.add-section__label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-primary);
+}
+
+.add-section__label i { font-size: 0.8rem; color: var(--text-muted); }
+
+.add-section__badge {
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 2px 7px;
+  border-radius: 2px;
+}
+
+.add-section__badge--new {
+  background: var(--text-primary);
+  color: var(--white);
+}
+
+.add-section__desc {
+  padding: 0.75rem 1.25rem 0;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* Collapsible sections */
+.add-section--collapsible summary { list-style: none; cursor: pointer; }
+.add-section--collapsible summary::-webkit-details-marker { display: none; }
+
+.add-section__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.1rem 1.25rem;
+}
+
+.add-section__summary .add-section__label { font-size: 0.82rem; }
+
+.add-section__chevron {
+  font-size: 0.65rem;
+  color: var(--text-light);
+  transition: transform 0.2s;
+}
+
+details[open] .add-section__chevron { transform: rotate(180deg); }
+
+.add-section__body { padding: 1.25rem; border-top: 1px solid var(--cream-border); }
+
+/* ── Camera button ── */
+.scan-camera-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  margin: 1.25rem 0 0;
+  padding: 0.9rem 1rem;
+  background: var(--text-primary);
+  color: var(--white);
+  border: none;
+  border-radius: 4px;
+  font-family: 'Geologica', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.scan-camera-btn:hover { background: var(--sage-dark); }
+.scan-camera-btn i { font-size: 0.9rem; }
+
+/* ── Capture button (inside camera view) ── */
+.scan-capture-btn {
+  position: absolute;
+  bottom: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.75rem 2rem;
+  background: var(--white);
+  color: var(--text-primary);
+  border: 2px solid var(--text-primary);
+  border-radius: 4px;
+  font-family: 'Geologica', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  z-index: 10;
+}
+.scan-capture-btn:hover { background: var(--cream); }
+.scan-capture-btn i { font-size: 1.1rem; color: #d32f2f; }
+
+/* ── Close camera button ── */
+.scan-close-btn {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.5);
+  color: var(--white);
+  border: none;
+  border-radius: 50%;
+  font-size: 1rem;
+  cursor: pointer;
+  z-index: 10;
+}
+
+/* ── Photo preview ── */
+.scan-preview {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.scan-preview__img {
+  width: 100%;
+  max-height: 260px;
+  object-fit: contain;
+  background: var(--cream-dark);
+  border: 1px solid var(--cream-border);
+  display: block;
+}
+
+.scan-analyze-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 0.85rem;
+  background: var(--white);
+  color: var(--text-primary);
+  border: 2px solid var(--text-primary);
+  border-radius: 4px;
+  font-family: 'Geologica', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.scan-analyze-btn:hover:not(:disabled) { background: var(--text-primary); color: var(--white); }
+.scan-analyze-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ── Status message ── */
+.scan-status {
+  margin-top: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.82rem;
+  border-radius: 4px;
+  border: 1px solid transparent;
+}
+.scan-status--loading { background: var(--cream-dark); color: var(--text-muted); border-color: var(--cream-border); }
+.scan-status--success { background: #F0F7EE; color: #2D6A2D; border-color: #C8E0C5; }
+.scan-status--error   { background: var(--red-light); color: var(--red); border-color: #F5C4C4; }
+
+/* ── Results ── */
+.scan-result {
+  margin-top: 1rem;
+  border: 1px solid var(--cream-border);
+}
+
+.scan-result__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.6rem 0.85rem;
+  background: var(--cream-dark);
+  border-bottom: 1px solid var(--cream-border);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.scan-result__list {
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.scan-ing-item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding: 0.45rem 0.85rem;
+  border-bottom: 1px solid var(--cream-border);
+  font-size: 0.78rem;
+}
+.scan-ing-item:last-child { border-bottom: none; }
+
+.scan-ing-item__pos {
+  width: 20px;
+  text-align: right;
+  flex-shrink: 0;
+  font-size: 0.65rem;
+  color: var(--text-light);
+  font-variant-numeric: tabular-nums;
+}
+
+.scan-ing-item__name { color: var(--text-muted); }
+
+/* ── Confirm form ── */
+.scan-confirm { margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--cream-border); }
+
+.scan-confirm__label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+/* ── Form fields (shared) ── */
+.add-form-group { margin-bottom: 1rem; }
+
+.add-form-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-primary);
+  margin-bottom: 0.4rem;
+}
+
+.add-form-input,
+.add-form-select {
+  width: 100%;
+  padding: 0.75rem 0.9rem;
+  background: var(--white);
+  border: 1px solid var(--cream-border);
+  border-radius: 4px;
+  font-family: 'Geologica', sans-serif;
+  font-size: 0.88rem;
+  color: var(--text-primary);
+  transition: border-color 0.15s;
+  appearance: none;
+}
+.add-form-input:focus,
+.add-form-select:focus { outline: none; border-color: var(--text-primary); }
+
+.add-submit-btn {
+  display: block;
+  width: 100%;
+  padding: 0.9rem;
+  background: var(--text-primary);
+  color: var(--white);
+  border: none;
+  border-radius: 4px;
+  font-family: 'Geologica', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: background 0.15s;
+}
+.add-submit-btn:hover { background: var(--sage-dark); }
+.add-submit-btn--disabled { opacity: 0.4; cursor: not-allowed; }
+
+.add-or {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1rem 0;
+  font-size: 0.72rem;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.add-or::before, .add-or::after { content: ""; flex: 1; height: 1px; background: var(--cream-border); }
+
+/* ── Accessibility helper ── */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+/* ── Barcode scanner camera view ── */
+.scan-camera-view {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: #000;
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+}
+
+.scan-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Overlay de visée */
+.scan-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  pointer-events: none;
+}
+
+/* Zone de visée centrale */
+.scan-overlay__frame {
+  position: relative;
+  width: 70%;
+  max-width: 280px;
+  aspect-ratio: 3/1;
+}
+
+/* Coins — 4 spans = 4 coins en L */
+.scan-overlay__frame span {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border-color: #fff;
+  border-style: solid;
+  border-width: 0;
+  transition: border-color 0.15s;
+}
+
+.scan-overlay__frame span:nth-child(1) { top: 0; left: 0;  border-top-width: 3px; border-left-width: 3px; }
+.scan-overlay__frame span:nth-child(2) { top: 0; right: 0; border-top-width: 3px; border-right-width: 3px; }
+.scan-overlay__frame span:nth-child(3) { bottom: 0; left: 0;  border-bottom-width: 3px; border-left-width: 3px; }
+.scan-overlay__frame span:nth-child(4) { bottom: 0; right: 0; border-bottom-width: 3px; border-right-width: 3px; }
+
+/* Ligne de scan animée */
+.scan-overlay__frame::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  height: 2px;
+  background: rgba(255,255,255,0.7);
+  top: 50%;
+  animation: scan-line 2s ease-in-out infinite;
+}
+
+@keyframes scan-line {
+  0%   { top: 10%; opacity: 1; }
+  50%  { top: 90%; opacity: 1; }
+  100% { top: 10%; opacity: 1; }
+}
+
+/* Flash vert au succès */
+.scan-overlay--hit .scan-overlay__frame span {
+  border-color: #4CAF50;
+}
+.scan-overlay--hit .scan-overlay__frame::after {
+  background: #4CAF50;
+  animation: none;
+  top: 50%;
+}
+
+.scan-overlay__hint {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.85);
+  text-align: center;
+  letter-spacing: 0.04em;
+  background: rgba(0,0,0,0.35);
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+/* Fond semi-opaque autour de la zone de visée */
+.scan-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  clip-path: polygon(
+    0% 0%, 100% 0%, 100% 100%, 0% 100%,
+    0% 0%,
+    15% 25%, 15% 75%, 85% 75%, 85% 25%, 15% 25%
+  );
+  pointer-events: none;
+}
+
+/* ============================================================
    PRODUCT SHOW — Composition
    ============================================================ */
 

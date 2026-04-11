@@ -1,33 +1,151 @@
 <%# app/views/products/new.html.erb %>
 <div class="container" style="max-width: 600px">
 
-  <%# En-tête %>
-  <div class="page-header">
-    <div>
-      <h1 class="page-header__title">Ajouter un produit</h1>
-      <p class="page-header__sub">Scanne le code-barre ou saisis-le manuellement</p>
-    </div>
-    <%= link_to "← Retour", products_path, class: "btn-glow btn-glow--outline btn-glow--sm" %>
+  <%# ── En-tête ── %>
+  <%= link_to products_path, class: "prod-back" do %>
+    <i class="fa-solid fa-arrow-left"></i> Ma collection
+  <% end %>
+
+  <div class="add-product-header">
+    <h1 class="add-product-header__title">Ajouter un produit</h1>
+    <p class="add-product-header__sub">Scanne le code-barre, la composition ou saisis manuellement.</p>
   </div>
 
-  <%# ─── Scanner ─── %>
-  <div class="glow-card mb-4"
-       data-controller="barcode-scanner"
-       data-barcode-scanner-lookup-url-value="<%= lookup_products_path %>">
+  <%# ═══════════════════════════════════════════
+      1. SCAN COMPOSITION (NOUVEAU)
+  ═══════════════════════════════════════════ %>
+  <div class="add-section"
+       data-controller="composition-scanner"
+       data-composition-scanner-scan-url-value="<%= scan_composition_products_path %>">
 
-    <%# Bouton caméra %>
-    <div class="glow-card__header">
-      <h2 class="glow-card__title">📷 Scanner le code-barre</h2>
+    <div class="add-section__header">
+      <div class="add-section__label">
+        <i class="fa-solid fa-camera"></i>
+        Photographier la composition
+      </div>
+      <span class="add-section__badge add-section__badge--new">IA</span>
     </div>
 
-    <div class="glow-card__body">
+    <p class="add-section__desc">
+      Prends en photo la liste d'ingrédients sur l'emballage. L'IA extrait automatiquement la composition.
+    </p>
 
-      <%# Vidéo caméra (cachée par défaut) %>
-      <div data-barcode-scanner-target="cameraView"
-           class="scan-camera-view" hidden>
-        <video data-barcode-scanner-target="video"
-               class="scan-video"
-               playsinline muted autoplay></video>
+    <%# Bouton principal caméra %>
+    <button type="button"
+            class="scan-camera-btn"
+            data-action="click->composition-scanner#openCamera">
+      <i class="fa-solid fa-camera"></i>
+      <span>Prendre une photo</span>
+    </button>
+
+    <%# Fallback file input (utilisé si getUserMedia échoue) %>
+    <input type="file"
+           accept="image/*"
+           data-composition-scanner-target="fileInput"
+           data-action="change->composition-scanner#onFileSelected"
+           class="sr-only">
+
+    <%# Vue caméra live (getUserMedia) %>
+    <div data-composition-scanner-target="cameraView" hidden class="scan-camera-view">
+      <video data-composition-scanner-target="video"
+             class="scan-video" playsinline muted autoplay></video>
+      <canvas data-composition-scanner-target="canvas" hidden></canvas>
+      <button type="button"
+              class="scan-capture-btn"
+              data-action="click->composition-scanner#capturePhoto">
+        <i class="fa-solid fa-circle-dot"></i>
+        Capturer
+      </button>
+      <button type="button"
+              class="scan-close-btn"
+              data-action="click->composition-scanner#closeCamera">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <%# Preview photo ── %>
+    <div data-composition-scanner-target="preview" hidden class="scan-preview">
+      <img data-composition-scanner-target="previewImg" alt="Aperçu" class="scan-preview__img">
+      <button type="button"
+              class="scan-analyze-btn"
+              data-composition-scanner-target="analyzeBtn"
+              data-action="click->composition-scanner#analyze"
+              disabled>
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        Analyser la composition
+      </button>
+    </div>
+
+    <%# Status message %>
+    <div data-composition-scanner-target="status" hidden class="scan-status"></div>
+
+    <%# Résultats extraits %>
+    <div data-composition-scanner-target="result" hidden class="scan-result">
+      <div class="scan-result__header">
+        <i class="fa-solid fa-list-check"></i>
+        <span data-composition-scanner-target="ingredientsCount"></span>
+      </div>
+      <div data-composition-scanner-target="ingredientsList" class="scan-result__list"></div>
+    </div>
+
+    <%# Formulaire de confirmation (après scan réussi) %>
+    <div data-composition-scanner-target="submitSection" hidden class="scan-confirm">
+      <p class="scan-confirm__label">Complète les informations du produit :</p>
+
+      <%= form_with url: products_path, method: :post, html: { class: "composition-form" } do |f| %>
+
+        <div class="add-form-group">
+          <%= f.label :name, "Nom du produit", class: "add-form-label" %>
+          <%= f.text_field :name, name: "product[name]",
+                data: { "composition-scanner-target": "nameInput" },
+                placeholder: "ex : Sérum Vitamine C",
+                class: "add-form-input" %>
+        </div>
+
+        <div class="add-form-group">
+          <%= f.label :brand, "Marque", class: "add-form-label" %>
+          <%= f.text_field :brand, name: "product[brand]",
+                data: { "composition-scanner-target": "brandInput" },
+                placeholder: "ex : The Ordinary",
+                class: "add-form-input" %>
+        </div>
+
+        <div class="add-form-group">
+          <%= f.label :category, "Catégorie", class: "add-form-label" %>
+          <%= f.select :category,
+                options_for_select([
+                  ["Nettoyant", "nettoyant"], ["Sérum", "serum"],
+                  ["Crème", "creme"], ["SPF", "spf"],
+                  ["Tonique", "tonique"], ["Masque", "masque"],
+                  ["Exfoliant", "exfoliant"], ["Autre", "autre"]
+                ]), {}, name: "product[category]", class: "add-form-select" %>
+        </div>
+
+        <%= f.submit "Ajouter à ma collection", class: "add-submit-btn" %>
+
+      <% end %>
+    </div>
+
+  </div>
+
+  <%# ═══════════════════════════════════════════
+      2. SCAN CODE-BARRE
+  ═══════════════════════════════════════════ %>
+  <details class="add-section add-section--collapsible">
+    <summary class="add-section__summary">
+      <div class="add-section__label">
+        <i class="fa-solid fa-barcode"></i>
+        Scanner le code-barre
+      </div>
+      <i class="fa-solid fa-chevron-down add-section__chevron"></i>
+    </summary>
+
+    <div class="add-section__body"
+         data-controller="barcode-scanner"
+         data-barcode-scanner-lookup-url-value="<%= lookup_products_path %>">
+
+      <div data-barcode-scanner-target="cameraView" class="scan-camera-view" hidden>
+        <video data-barcode-scanner-target="video" class="scan-video" playsinline muted autoplay></video>
         <div data-barcode-scanner-target="overlay" class="scan-overlay">
           <div class="scan-overlay__frame">
             <span></span><span></span><span></span><span></span>
@@ -36,82 +154,80 @@
         </div>
       </div>
 
-      <%# Bouton toggle caméra %>
       <button type="button"
               data-barcode-scanner-target="cameraBtn"
               data-action="click->barcode-scanner#toggleCamera"
-              class="btn-glow btn-glow--primary w-100 mb-3">
-        📷 Scanner avec la caméra
+              class="scan-camera-btn">
+        <i class="fa-solid fa-barcode"></i>
+        <span>Scanner avec la caméra</span>
       </button>
 
-      <%# Séparateur %>
-      <div class="scan-or">
-        <span>ou saisir le code manuellement</span>
-      </div>
+      <div class="add-or"><span>ou</span></div>
 
-      <%# Saisie manuelle %>
-      <div class="glow-form-group mt-3">
-        <label class="glow-label">Code-barre (EAN-8 ou EAN-13)</label>
+      <div class="add-form-group">
+        <label class="add-form-label">Code-barre (EAN-8 ou EAN-13)</label>
         <input type="text"
                data-barcode-scanner-target="input"
                data-action="input->barcode-scanner#lookup"
                placeholder="Ex : 3600523816071"
                inputmode="numeric"
-               pattern="\d{8}|\d{13}"
-               class="glow-input"
-               autocomplete="off">
+               autocomplete="off"
+               class="add-form-input">
       </div>
 
-      <%# Feedback + preview %>
       <div data-barcode-scanner-target="feedback"></div>
       <div data-barcode-scanner-target="preview"></div>
 
-      <%# Formulaire d'import (barcode) %>
       <%= form_with url: products_path, method: :post do |f| %>
         <%= hidden_field_tag :barcode, "", id: "barcode_hidden" %>
         <%= f.submit "Ajouter à ma collection",
               data: { "barcode-scanner-target": "submit" },
               disabled: true,
-              class: "btn-glow btn-glow--gold w-100 mt-3" %>
+              class: "add-submit-btn add-submit-btn--disabled" %>
       <% end %>
 
     </div>
-  </div>
+  </details>
 
-  <%# ─── Ajout manuel (fallback) ─── %>
-  <details class="glow-card">
-    <summary class="glow-card__header" style="cursor:pointer; list-style:none">
-      <span class="glow-card__title">✏️ Produit non trouvé ? Ajouter manuellement</span>
-      <span class="text-muted" style="font-size:12px">Cliquer pour développer</span>
+  <%# ═══════════════════════════════════════════
+      3. AJOUT MANUEL
+  ═══════════════════════════════════════════ %>
+  <details class="add-section add-section--collapsible">
+    <summary class="add-section__summary">
+      <div class="add-section__label">
+        <i class="fa-solid fa-pen-to-square"></i>
+        Saisir manuellement
+      </div>
+      <i class="fa-solid fa-chevron-down add-section__chevron"></i>
     </summary>
 
-    <div class="glow-card__body">
+    <div class="add-section__body">
       <%= form_with url: products_path, method: :post do |f| %>
 
-        <div class="glow-form-group">
-          <%= f.label :name, "Nom du produit", class: "glow-label" %>
-          <%= f.text_field :name, name: "product[name]", class: "glow-input",
+        <div class="add-form-group">
+          <%= f.label :name, "Nom du produit", class: "add-form-label" %>
+          <%= f.text_field :name, name: "product[name]", class: "add-form-input",
                 placeholder: "ex : Sérum Vitamine C The Ordinary" %>
         </div>
 
-        <div class="glow-form-group">
-          <%= f.label :brand, "Marque", class: "glow-label" %>
-          <%= f.text_field :brand, name: "product[brand]", class: "glow-input",
+        <div class="add-form-group">
+          <%= f.label :brand, "Marque", class: "add-form-label" %>
+          <%= f.text_field :brand, name: "product[brand]", class: "add-form-input",
                 placeholder: "ex : The Ordinary" %>
         </div>
 
-        <div class="glow-form-group">
-          <%= f.label :category, "Catégorie", class: "glow-label" %>
+        <div class="add-form-group">
+          <%= f.label :category, "Catégorie", class: "add-form-label" %>
           <%= f.select :category,
                 options_for_select([
                   ["Nettoyant", "nettoyant"], ["Sérum", "serum"],
-                  ["Crème", "creme"],         ["SPF", "spf"],
-                  ["Tonique", "tonique"],      ["Masque", "masque"],
+                  ["Crème", "creme"], ["SPF", "spf"],
+                  ["Tonique", "tonique"], ["Masque", "masque"],
                   ["Exfoliant", "exfoliant"], ["Autre", "autre"]
-                ]), {}, class: "glow-select" %>
+                ]), {}, name: "product[category]", class: "add-form-select" %>
         </div>
 
-        <%= f.submit "Ajouter", class: "btn-glow btn-glow--outline w-100" %>
+        <%= f.submit "Ajouter", class: "add-submit-btn" %>
       <% end %>
     </div>
   </details>

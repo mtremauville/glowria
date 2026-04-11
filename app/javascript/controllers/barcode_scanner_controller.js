@@ -70,7 +70,7 @@ export default class extends Controller {
       await this.videoTarget.play()
 
       this.cameraViewTarget.hidden = false
-      this.cameraBtnTarget.textContent = "✕ Fermer la caméra"
+      this.cameraBtnTarget.innerHTML = '<i class="fa-solid fa-xmark"></i><span>Fermer la caméra</span>'
       this.scanning = true
       this.lastBarcode = null
 
@@ -95,7 +95,9 @@ export default class extends Controller {
     }
 
     if (this.hasCameraViewTarget) this.cameraViewTarget.hidden = true
-    if (this.hasCameraBtnTarget)  this.cameraBtnTarget.textContent = "📷 Scanner avec la caméra"
+    if (this.hasCameraBtnTarget) {
+      this.cameraBtnTarget.innerHTML = '<i class="fa-solid fa-barcode"></i><span>Scanner avec la caméra</span>'
+    }
   }
 
   scanLoop() {

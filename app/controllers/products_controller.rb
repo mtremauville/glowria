@@ -37,6 +37,16 @@ class ProductsController < ApplicationController
     end
   end
 
+  # POST /products/scan_composition (appelé par Stimulus via AJAX)
+  def scan_composition
+    unless params[:image].present?
+      return render json: { success: false, error: "Aucune image reçue." }, status: :bad_request
+    end
+
+    result = CompositionScannerService.new(params[:image]).scan
+    render json: result
+  end
+
   # GET /products/lookup?barcode=3600523816071 (appelé par Stimulus live)
   def lookup
     result = OpenFoodFactsService.new(params[:barcode]).fetch
@@ -53,8 +63,14 @@ class ProductsController < ApplicationController
   def manual_params
     return nil if params[:product].blank?
 
-    params.require(:product).permit(:name, :brand, :category, :description)
-          .to_h.symbolize_keys.merge(ingredients: [])
+    product_params = params.require(:product)
+                           .permit(:name, :brand, :category, :description, ingredients: [])
+                           .to_h.symbolize_keys
+
+    # Les ingrédients viennent soit de product[ingredients][] (scan composition)
+    # soit sont vides (saisie manuelle)
+    product_params[:ingredients] = Array(product_params[:ingredients]).map(&:to_s).reject(&:blank?)
+    product_params
   end
 
   def flash_conflicts(conflicts)

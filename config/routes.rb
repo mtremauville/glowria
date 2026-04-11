@@ -12,7 +12,10 @@ Rails.application.routes.draw do
   get "offline" => "pwa#offline", as: :pwa_offline
 
   resources :products, only: [:index, :show, :new, :create] do
-    collection { get :lookup }
+    collection do
+      get  :lookup
+      post :scan_composition
+    end
   end
 
   resources :user_products, only: [:create, :destroy]
