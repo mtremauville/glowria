@@ -1,7 +1,15 @@
+# app/controllers/application_controller.rb
 class ApplicationController < ActionController::Base
-  # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
-  allow_browser versions: :modern
+  before_action :authenticate_user!
+  before_action :check_onboarding
 
-  # Changes to the importmap will invalidate the etag for HTML responses
-  stale_when_importmap_changes
+  private
+
+  def check_onboarding
+    return unless user_signed_in?
+    return if current_user.skin_type.present?
+    return if request.path.start_with?("/onboarding", "/users")
+
+    redirect_to onboarding_path
+  end
 end

@@ -1,2 +1,62 @@
-<h1>Routines#index</h1>
-<p>Find me in app/views/routines/index.html.erb</p>
+<%# app/views/routines/index.html.erb %>
+<div class="container">
+
+  <div class="page-header">
+    <div>
+      <h1 class="page-header__title">Mes routines</h1>
+      <p class="page-header__sub">Générées par l'IA selon ta collection et ton type de peau</p>
+    </div>
+    <%= button_to "✨ Régénérer",
+          generate_routine_path(0),
+          method: :post,
+          class: "btn-glow btn-glow--primary btn-glow--sm",
+          form: { "data-turbo" => "false" } %>
+  </div>
+
+  <div class="grid grid-2-auto">
+    <% { "morning" => ["☀️", "Routine matin", @morning], "evening" => ["🌙", "Routine soir", @evening] }.each do |period, (icon, label, routine)| %>
+      <div class="routine-card">
+        <div class="routine-card__header">
+          <span class="routine-card__label"><%= icon %> <%= label %></span>
+          <% if routine %>
+            <span class="routine-card__age">Générée <%= time_ago_in_words(routine.generated_at) %></span>
+          <% end %>
+        </div>
+        <div class="routine-card__body">
+          <% if routine&.routine_steps&.any? %>
+            <% if routine.ai_summary.present? %>
+              <div class="routine-summary mb-4">
+                <span>💡</span>
+                <span><%= routine.ai_summary %></span>
+              </div>
+            <% end %>
+            <div class="flex flex-col gap-3">
+              <% routine.routine_steps.includes(user_product: :product).order(:order).each do |step| %>
+                <div class="routine-step">
+                  <span class="routine-step__num"><%= step.order %></span>
+                  <div class="routine-step__content flex-1">
+                    <div class="routine-step__name"><%= step.user_product.product.name %></div>
+                    <div class="routine-step__brand"><%= step.user_product.product.brand %></div>
+                    <div class="routine-step__tip"><%= step.instruction %></div>
+                  </div>
+                  <% if step.user_product.product.image_url.present? %>
+                    <%= image_tag step.user_product.product.image_url,
+                          alt: step.user_product.product.name,
+                          class: "routine-step__img" %>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="empty-state py-8">
+              <span class="empty-state__icon"><%= period == "morning" ? "☀️" : "🌙" %></span>
+              <p class="empty-state__title">Aucune routine <%= period == "morning" ? "matin" : "soir" %></p>
+              <p class="empty-state__sub">Ajoute des produits puis clique sur "Régénérer".</p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+</div>

@@ -1,2 +1,83 @@
-<h1>Conflicts#index</h1>
-<p>Find me in app/views/conflicts/index.html.erb</p>
+<%# app/views/conflicts/index.html.erb %>
+<div class="container container--md">
+
+  <div class="page-header">
+    <div>
+      <h1 class="page-header__title">Interactions détectées</h1>
+      <p class="page-header__sub">
+        <%= @conflict_count %> interaction<%= "s" if @conflict_count != 1 %>
+        dans ta collection
+      </p>
+    </div>
+    <%= link_to "← Dashboard", root_path, class: "btn-glow btn-glow--outline btn-glow--sm" %>
+  </div>
+
+  <% if @conflict_count == 0 %>
+    <div class="glow-card">
+      <div class="empty-state py-8">
+        <span class="empty-state__icon">✅</span>
+        <p class="empty-state__title">Aucun conflit détecté !</p>
+        <p class="empty-state__sub">Tes produits sont parfaitement compatibles entre eux.</p>
+        <%= link_to "Voir ma collection", products_path, class: "btn-glow btn-glow--primary btn-glow--sm" %>
+      </div>
+    </div>
+
+  <% else %>
+    <% severity_config = {
+      "high"   => { icon: "🔴", label: "Conflits sérieux",       desc: "Ces combinaisons peuvent irriter ou endommager ta peau." },
+      "medium" => { icon: "🟡", label: "Interactions modérées",  desc: "Ces combinaisons réduisent l'efficacité ou peuvent légèrement irriter." },
+      "low"    => { icon: "🟢", label: "Interactions mineures",  desc: "Ces combinaisons sont sûres mais peuvent être optimisées." }
+    } %>
+
+    <div class="flex flex-col gap-6">
+      <% %w[high medium low].each do |severity| %>
+        <% next unless @conflicts_by_severity[severity]&.any? %>
+        <% cfg = severity_config[severity] %>
+
+        <section>
+          <div class="flex items-center gap-3 mb-3">
+            <span style="font-size:1.1rem"><%= cfg[:icon] %></span>
+            <div>
+              <% badge_class = { "high" => "conflict-count-badge conflict-count-badge--high", "medium" => "conflict-count-badge conflict-count-badge--medium", "low" => "conflict-count-badge conflict-count-badge--low" }[severity] %>
+              <h2 style="font-family:'Playfair Display',serif; font-size:1rem; margin:0">
+                <%= cfg[:label] %>
+                <span class="<%= badge_class %>"><%= @conflicts_by_severity[severity].count %></span>
+              </h2>
+              <p class="text-muted text-sm mt-1 mb-0"><%= cfg[:desc] %></p>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-3">
+            <% @conflicts_by_severity[severity].each do |conflict| %>
+              <% card_class = { "high" => "conflict-card conflict-card--high", "medium" => "conflict-card conflict-card--medium", "low" => "conflict-card conflict-card--low" }[severity] %>
+              <div class="<%= card_class %>">
+                <div class="conflict-card__products">
+                  <span class="conflict-card__product">
+                    🧴 <%= conflict[:user_product_a].product.name %>
+                    <em class="text-muted text-xs">(<%= conflict[:ingredient_a].name %>)</em>
+                  </span>
+                  <span class="conflict-card__separator">✕</span>
+                  <span class="conflict-card__product">
+                    🧴 <%= conflict[:user_product_b].product.name %>
+                    <em class="text-muted text-xs">(<%= conflict[:ingredient_b].name %>)</em>
+                  </span>
+                </div>
+                <p class="conflict-card__message"><%= conflict[:message] %></p>
+                <div class="conflict-card__recommendation">
+                  <span>💡</span>
+                  <span><%= conflict[:recommendation] %></span>
+                </div>
+                <div class="mt-3">
+                  <%= link_to "Demander à l'IA →",
+                        chat_messages_path(q: "#{conflict[:ingredient_a].name} + #{conflict[:ingredient_b].name} : que faire ?"),
+                        class: "btn-glow btn-glow--outline btn-glow--sm" %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </section>
+      <% end %>
+    </div>
+  <% end %>
+
+</div>

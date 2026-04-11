@@ -1,2 +1,119 @@
-<h1>Products#new</h1>
-<p>Find me in app/views/products/new.html.erb</p>
+<%# app/views/products/new.html.erb %>
+<div class="container" style="max-width: 600px">
+
+  <%# En-tête %>
+  <div class="page-header">
+    <div>
+      <h1 class="page-header__title">Ajouter un produit</h1>
+      <p class="page-header__sub">Scanne le code-barre ou saisis-le manuellement</p>
+    </div>
+    <%= link_to "← Retour", products_path, class: "btn-glow btn-glow--outline btn-glow--sm" %>
+  </div>
+
+  <%# ─── Scanner ─── %>
+  <div class="glow-card mb-4"
+       data-controller="barcode-scanner"
+       data-barcode-scanner-lookup-url-value="<%= lookup_products_path %>">
+
+    <%# Bouton caméra %>
+    <div class="glow-card__header">
+      <h2 class="glow-card__title">📷 Scanner le code-barre</h2>
+    </div>
+
+    <div class="glow-card__body">
+
+      <%# Vidéo caméra (cachée par défaut) %>
+      <div data-barcode-scanner-target="cameraView"
+           class="scan-camera-view" hidden>
+        <video data-barcode-scanner-target="video"
+               class="scan-video"
+               playsinline muted autoplay></video>
+        <div data-barcode-scanner-target="overlay" class="scan-overlay">
+          <div class="scan-overlay__frame">
+            <span></span><span></span><span></span><span></span>
+          </div>
+          <p class="scan-overlay__hint">Centrez le code-barre dans le cadre</p>
+        </div>
+      </div>
+
+      <%# Bouton toggle caméra %>
+      <button type="button"
+              data-barcode-scanner-target="cameraBtn"
+              data-action="click->barcode-scanner#toggleCamera"
+              class="btn-glow btn-glow--primary w-100 mb-3">
+        📷 Scanner avec la caméra
+      </button>
+
+      <%# Séparateur %>
+      <div class="scan-or">
+        <span>ou saisir le code manuellement</span>
+      </div>
+
+      <%# Saisie manuelle %>
+      <div class="glow-form-group mt-3">
+        <label class="glow-label">Code-barre (EAN-8 ou EAN-13)</label>
+        <input type="text"
+               data-barcode-scanner-target="input"
+               data-action="input->barcode-scanner#lookup"
+               placeholder="Ex : 3600523816071"
+               inputmode="numeric"
+               pattern="\d{8}|\d{13}"
+               class="glow-input"
+               autocomplete="off">
+      </div>
+
+      <%# Feedback + preview %>
+      <div data-barcode-scanner-target="feedback"></div>
+      <div data-barcode-scanner-target="preview"></div>
+
+      <%# Formulaire d'import (barcode) %>
+      <%= form_with url: products_path, method: :post do |f| %>
+        <%= hidden_field_tag :barcode, "", id: "barcode_hidden" %>
+        <%= f.submit "Ajouter à ma collection",
+              data: { "barcode-scanner-target": "submit" },
+              disabled: true,
+              class: "btn-glow btn-glow--gold w-100 mt-3" %>
+      <% end %>
+
+    </div>
+  </div>
+
+  <%# ─── Ajout manuel (fallback) ─── %>
+  <details class="glow-card">
+    <summary class="glow-card__header" style="cursor:pointer; list-style:none">
+      <span class="glow-card__title">✏️ Produit non trouvé ? Ajouter manuellement</span>
+      <span class="text-muted" style="font-size:12px">Cliquer pour développer</span>
+    </summary>
+
+    <div class="glow-card__body">
+      <%= form_with url: products_path, method: :post do |f| %>
+
+        <div class="glow-form-group">
+          <%= f.label :name, "Nom du produit", class: "glow-label" %>
+          <%= f.text_field :name, name: "product[name]", class: "glow-input",
+                placeholder: "ex : Sérum Vitamine C The Ordinary" %>
+        </div>
+
+        <div class="glow-form-group">
+          <%= f.label :brand, "Marque", class: "glow-label" %>
+          <%= f.text_field :brand, name: "product[brand]", class: "glow-input",
+                placeholder: "ex : The Ordinary" %>
+        </div>
+
+        <div class="glow-form-group">
+          <%= f.label :category, "Catégorie", class: "glow-label" %>
+          <%= f.select :category,
+                options_for_select([
+                  ["Nettoyant", "nettoyant"], ["Sérum", "serum"],
+                  ["Crème", "creme"],         ["SPF", "spf"],
+                  ["Tonique", "tonique"],      ["Masque", "masque"],
+                  ["Exfoliant", "exfoliant"], ["Autre", "autre"]
+                ]), {}, class: "glow-select" %>
+        </div>
+
+        <%= f.submit "Ajouter", class: "btn-glow btn-glow--outline w-100" %>
+      <% end %>
+    </div>
+  </details>
+
+</div>

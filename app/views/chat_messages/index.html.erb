@@ -1,2 +1,56 @@
-<h1>ChatMessages#index</h1>
-<p>Find me in app/views/chat_messages/index.html.erb</p>
+<%# app/views/chat_messages/index.html.erb %>
+<div class="chat-container" data-controller="chat">
+
+  <%# Zone des messages %>
+  <div class="chat-messages" data-chat-target="messages">
+
+    <% if @messages.empty? %>
+      <div class="chat-welcome">
+        <span style="font-size:2.8rem; display:block; margin-bottom:.75rem">✨</span>
+        <p class="chat-welcome__title">Ton assistante skincare</p>
+        <p class="text-muted text-sm">Pose-moi une question sur tes produits, les interactions ou ta routine.</p>
+        <div class="chat-suggestions">
+          <% [
+            "Puis-je utiliser le rétinol avec de la vitamine C ?",
+            "Quelle est ma routine optimale ce soir ?",
+            "Quels produits sont déconseillés après le soleil ?"
+          ].each do |suggestion| %>
+            <button class="chat-suggestion-btn"
+                    data-action="click->chat#send"
+                    data-message="<%= suggestion %>">
+              <%= suggestion %>
+            </button>
+          <% end %>
+        </div>
+      </div>
+
+    <% else %>
+      <% @messages.each do |msg| %>
+        <% msg_class = msg.role == "user" ? "chat-message chat-message--user" : "chat-message chat-message--assistant" %>
+        <div class="<%= msg_class %>">
+          <div class="chat-message__avatar"><%= msg.role == "user" ? "👤" : "✨" %></div>
+          <div class="chat-message__bubble"><%= msg.content %></div>
+        </div>
+      <% end %>
+    <% end %>
+
+    <%# Indicateur de frappe %>
+    <div class="chat-typing" data-chat-target="typing" hidden>
+      <span></span><span></span><span></span>
+    </div>
+
+  </div>
+
+  <%# Formulaire de saisie %>
+  <form class="chat-form" data-action="submit->chat#send">
+    <textarea
+      data-chat-target="input"
+      data-action="keydown->chat#handleKeydown"
+      placeholder="Pose ta question skincare…"
+      rows="1"
+      class="chat-input"
+    ></textarea>
+    <button type="submit" data-chat-target="submit" class="chat-submit">↑</button>
+  </form>
+
+</div>
