@@ -20,7 +20,7 @@
   <div class="glow-card">
     <% if @user_products.any? %>
       <% @user_products.each do |up| %>
-        <% molecules = up.product.product_ingredients.sort_by(&:position).map { |pi| pi.ingredient.name } %>
+        <% molecules = up.product.product_ingredients.sort_by(&:position).map { |pi| [pi.ingredient.name, pi.ingredient.function] } %>
         <div class="product-row">
           <div class="product-row__main">
             <% if up.product.image_url.present? %>
@@ -52,8 +52,9 @@
 
           <% if molecules.any? %>
             <div class="product-row__molecules">
-              <% molecules.first(5).each do |mol| %>
-                <span class="molecule-tag"><%= mol %></span>
+              <% molecules.first(5).each do |name, fn| %>
+                <% color = molecule_color_from_function(fn) || molecule_color_from_name(name) %>
+                <span class="molecule-tag <%= color %>"><%= name %></span>
               <% end %>
               <% if molecules.size > 5 %>
                 <span class="molecule-tag molecule-tag--more">+<%= molecules.size - 5 %></span>

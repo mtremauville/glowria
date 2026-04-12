@@ -1,4 +1,26 @@
 <%# app/views/dashboard/index.html.erb %>
+<div data-controller="routine-loader">
+
+<%# ── Overlay de chargement ── %>
+<div data-routine-loader-target="overlay" hidden class="routine-loader-overlay">
+  <div class="routine-loader-card">
+    <div class="routine-loader-logo">
+      <i class="fa-solid fa-leaf"></i>
+      <span>Glowria</span>
+    </div>
+    <div class="routine-loader-icon">
+      <i class="fa-solid fa-wand-magic-sparkles"></i>
+    </div>
+    <h2 class="routine-loader-title">Génération en cours</h2>
+    <p class="routine-loader-subtitle">L'IA analyse ta collection et crée tes routines personnalisées</p>
+    <div class="routine-loader-bar-track">
+      <div class="routine-loader-bar" data-routine-loader-target="bar"></div>
+    </div>
+    <p class="routine-loader__msg routine-loader__msg--in" data-routine-loader-target="message">
+      Analyse de ta collection…
+    </p>
+  </div>
+</div>
 
 <%# ══════════════════════════════════════════
     HERO
@@ -7,8 +29,8 @@
   <div class="db-hero__bg"></div>
   <div class="db-hero__content container">
     <div class="db-hero__left">
-      <p class="db-hero__eyebrow">Bonjour, <%= current_user.email.split("@").first.capitalize %></p>
-      <h1 class="db-hero__title">Ta peau mérite<br>le meilleur soin.</h1>
+      <p class="db-hero__eyebrow">Bonjour, <%= current_user.display_name.presence || current_user.email.split("@").first.capitalize %></p>
+      <h1 class="db-hero__title">Ta peau mérite le meilleur soin.</h1>
       <div class="db-hero__meta">
         <span class="db-meta-chip db-meta-chip--skin">
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.5"/><path d="M6 3v3l2 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
@@ -134,7 +156,9 @@
                   generate_routine_path(r[:routine] || 0),
                   method: :post,
                   class: "db-routine-card__btn",
-                  form: { "data-turbo" => "false" } %>
+                  data: { "routine-loader-target": "btn", action: "submit->routine-loader#show" },
+                  form: { "data-turbo" => "false",
+                          "data-action" => "submit->routine-loader#show" } %>
           </div>
         </div>
       <% end %>
@@ -212,4 +236,6 @@
     </div>
   </div>
 
-</div>
+</div><%# /db-body %>
+
+</div><%# /routine-loader %>

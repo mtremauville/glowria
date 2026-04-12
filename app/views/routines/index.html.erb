@@ -1,5 +1,30 @@
 <%# app/views/routines/index.html.erb %>
-<div class="container">
+<div class="container" data-controller="routine-loader">
+
+  <%# ── Overlay de chargement ── %>
+  <div data-routine-loader-target="overlay" hidden class="routine-loader-overlay">
+    <div class="routine-loader-card">
+      <div class="routine-loader-logo">
+        <i class="fa-solid fa-leaf"></i>
+        <span>Glowria</span>
+      </div>
+
+      <div class="routine-loader-icon">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+      </div>
+
+      <h2 class="routine-loader-title">Génération en cours</h2>
+      <p class="routine-loader-subtitle">L'IA analyse ta collection et crée tes routines personnalisées</p>
+
+      <div class="routine-loader-bar-track">
+        <div class="routine-loader-bar" data-routine-loader-target="bar"></div>
+      </div>
+
+      <p class="routine-loader__msg routine-loader__msg--in" data-routine-loader-target="message">
+        Analyse de ta collection…
+      </p>
+    </div>
+  </div>
 
   <div class="page-header">
     <div>
@@ -11,7 +36,9 @@
     <%= button_to generate_routine_path(0),
           method: :post,
           class: "btn-glow btn-glow--primary btn-glow--sm",
-          form: { "data-turbo" => "false" } do %>
+          data: { "routine-loader-target": "btn", action: "submit->routine-loader#show" },
+          form: { "data-turbo" => "false",
+                  "data-action" => "submit->routine-loader#show" } do %>
       <i class="fa-solid fa-rotate"></i> Régénérer
     <% end %>
   </div>
@@ -46,11 +73,16 @@
                   <span class="routine-step__num"><%= step.order %></span>
                   <div class="routine-step__content">
                     <div class="routine-step__name"><%= product.name %></div>
-                    <div class="routine-step__tip"><%= step.instruction %></div>
+                    <% if step.instruction.present? %>
+                      <div class="routine-step__tip routine-tip-msg">
+                        <i class="fa-solid fa-wand-magic-sparkles routine-tip-msg__icon"></i>
+                        <%= step.instruction %>
+                      </div>
+                    <% end %>
                     <% if molecules.any? %>
                       <div class="routine-step__molecules">
                         <% molecules.first(4).each do |mol| %>
-                          <span class="molecule-tag"><%= mol %></span>
+                          <span class="molecule-tag <%= molecule_color_from_name(mol) %>"><%= mol %></span>
                         <% end %>
                         <% if molecules.size > 4 %>
                           <span class="molecule-tag molecule-tag--more">+<%= molecules.size - 4 %></span>

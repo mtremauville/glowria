@@ -260,7 +260,7 @@
         <p class="auth-eyebrow">Skincare intelligent</p>
 
         <h1 class="auth-hero__title">
-          La science<br>au service<br>de ta peau.
+          La science<br>au service de ta peau.
         </h1>
 
         <p class="auth-hero__subtitle">
@@ -309,7 +309,7 @@
             <div class="auth-label-row">
               <%= f.label :password, "Mot de passe", class: "auth-label" %>
               <% if devise_mapping.recoverable? %>
-                <%= link_to "Oublié ?", new_password_path(resource_name), class: "auth-forgot" %>
+                <%#= link_to "Oublié ?", new_password_path(resource_name), class: "auth-forgot" %>
               <% end %>
             </div>
             <%= f.password_field :password, autocomplete: "current-password",

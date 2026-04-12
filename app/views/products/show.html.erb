@@ -80,10 +80,11 @@
       </div>
 
       <div class="prod-inci">
-        <% @ingredients.each do |pi| %>
+        <% @ingredients.each_with_index do |pi, idx| %>
           <% ing = pi.ingredient %>
+          <% mol_color = molecule_color_from_function(ing.function) %>
           <div class="prod-inci__item <%= 'prod-inci__item--active' if ing.function.present? || ing.benefits.present? %>">
-            <span class="prod-inci__pos"><%= pi.position || loop.index + 1 %></span>
+            <span class="prod-inci__pos"><%= pi.position || idx + 1 %></span>
             <div class="prod-inci__body">
               <span class="prod-inci__name"><%= ing.inci_name.present? ? ing.inci_name : ing.name %></span>
               <% if ing.name.present? && ing.inci_name.present? && ing.inci_name.downcase != ing.name.downcase %>
@@ -91,7 +92,9 @@
               <% end %>
             </div>
             <% if ing.function.present? %>
-              <span class="prod-inci__fn"><%= ing.function.split(/[,;]/).first.strip %></span>
+              <span class="prod-inci__fn molecule-tag <%= mol_color %>">
+                <%= ing.function.split(/[,;]/).first.strip %>
+              </span>
             <% end %>
           </div>
         <% end %>

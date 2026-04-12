@@ -27,6 +27,8 @@
           <% if current_user.avatar.attached? %>
             <%= image_tag current_user.avatar.variant(resize_to_fill: [34, 34]),
                   class: "navbar-avatar-img", alt: "" %>
+          <% elsif current_user.display_name.present? %>
+            <span class="navbar-avatar-initials"><%= current_user.display_name[0].upcase %></span>
           <% else %>
             <i class="fa-solid fa-circle-user"></i>
           <% end %>

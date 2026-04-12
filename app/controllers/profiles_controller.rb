@@ -20,6 +20,6 @@ class ProfilesController < ApplicationController
   private
 
   def profile_params
-    params.require(:user).permit(:skin_type, :avatar, skin_goals: [], skin_concerns: [])
+    params.require(:user).permit(:display_name, :skin_type, :avatar, skin_goals: [], skin_concerns: [])
   end
 end

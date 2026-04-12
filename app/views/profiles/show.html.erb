@@ -58,6 +58,23 @@
   <%# ── Formulaire peau ── %>
   <%= form_with model: current_user, url: profile_path, method: :patch do |f| %>
 
+    <%# Nom affiché %>
+    <div class="add-section" style="margin-bottom: 1rem">
+      <div class="add-section__header">
+        <div class="add-section__label">
+          <i class="fa-solid fa-signature"></i>
+          Nom affiché
+        </div>
+      </div>
+      <div class="add-section__body">
+        <div class="add-form-group" style="margin: 0">
+          <%= f.text_field :display_name, class: "add-form-input",
+                placeholder: "ex : Sophie, @sophieskin…",
+                value: current_user.display_name %>
+        </div>
+      </div>
+    </div>
+
     <%# Type de peau %>
     <div class="add-section" style="margin-bottom: 1rem">
       <div class="add-section__header">
