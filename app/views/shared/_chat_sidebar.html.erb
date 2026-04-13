@@ -1,0 +1,52 @@
+<%# shared/_chat_sidebar.html.erb
+    @conversations — list to render
+    current_conversation — optional, to highlight active item
+%>
+<aside class="chat-sidebar">
+  <div class="chat-sidebar__inner">
+
+    <div class="chat-sidebar__top">
+      <div class="chat-logo">
+        <i class="fa-solid fa-leaf"></i>
+        <span>Glowria</span>
+      </div>
+
+      <%= link_to chat_messages_path, class: "chat-new-btn" do %>
+        <i class="fa-solid fa-plus"></i>
+        Nouveau chat
+      <% end %>
+    </div>
+
+    <div class="chat-sidebar__history">
+      <% if @conversations.any? %>
+        <p class="chat-history__label">Historique</p>
+        <ul class="chat-history__list">
+          <% @conversations.each do |conv| %>
+            <% is_active = local_assigns[:current_conversation]&.id == conv.id %>
+            <li class="chat-history__item <%= 'chat-history__item--active' if is_active %>">
+              <%= link_to conversation_path(conv), class: "chat-history__link", data: { turbo: false } do %>
+                <span class="chat-history__title"><%= conv.title %></span>
+                <span class="chat-history__date"><%= time_ago_in_words(conv.updated_at) %></span>
+              <% end %>
+              <%= button_to conversation_path(conv),
+                    method: :delete,
+                    class: "chat-history__delete",
+                    data: { turbo_confirm: "Supprimer cette conversation ?" },
+                    title: "Supprimer" do %>
+                <i class="fa-solid fa-xmark"></i>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <p class="chat-history__empty">Aucune conversation pour l'instant.</p>
+      <% end %>
+    </div>
+
+    <div class="chat-sidebar__footer">
+      <p class="chat-sidebar__eyebrow">ASSISTANTE IA</p>
+      <p class="chat-sidebar__tagline">Ton experte skincare<br>au quotidien.</p>
+    </div>
+
+  </div>
+</aside>

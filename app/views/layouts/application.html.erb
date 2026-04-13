@@ -47,5 +47,24 @@
     <div class="glow-page">
       <%= yield %>
     </div>
+
+    <%# ── Modal de confirmation global ── %>
+    <dialog id="turbo-confirm-dialog" class="confirm-dialog">
+      <div class="confirm-dialog__backdrop"></div>
+      <div class="confirm-dialog__box">
+        <div class="confirm-dialog__icon">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <p class="confirm-dialog__message" id="confirm-dialog-message"></p>
+        <div class="confirm-dialog__actions">
+          <button class="confirm-dialog__btn confirm-dialog__btn--cancel" id="confirm-dialog-cancel">
+            Annuler
+          </button>
+          <button class="confirm-dialog__btn confirm-dialog__btn--confirm" id="confirm-dialog-confirm">
+            Confirmer
+          </button>
+        </div>
+      </div>
+    </dialog>
   </body>
 </html>

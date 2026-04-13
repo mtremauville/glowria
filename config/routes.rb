@@ -26,6 +26,7 @@ Rails.application.routes.draw do
 
   resources :conflicts, only: [:index]
   resources :chat_messages, only: [:index, :create]
+  resources :conversations, only: [:show, :destroy]
 
   resource :profile, only: [:show, :update] do
     delete :avatar, on: :member

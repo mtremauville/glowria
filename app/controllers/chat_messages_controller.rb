@@ -1,9 +1,11 @@
 class ChatMessagesController < ApplicationController
   before_action :authenticate_user!
-  include ActionController::Live  # active le streaming SSE
+  include ActionController::Live
 
   def index
-    @messages = current_user.chat_messages.order(created_at: :asc).last(50)
+    @conversations = current_user.conversations.recent
+    @messages = []
+    @conversation = nil
   end
 
   def create
@@ -12,19 +14,33 @@ class ChatMessagesController < ApplicationController
 
     return head :bad_request if user_message.blank? && image.blank?
 
-    response.headers["Content-Type"]     = "text/event-stream"
-    response.headers["Cache-Control"]    = "no-cache"
+    # Find or create conversation
+    conversation = if params[:conversation_id].present?
+      current_user.conversations.find_by(id: params[:conversation_id])
+    end
+    conversation ||= current_user.conversations.create!(title: "Nouvelle conversation")
+
+    # Auto-title on first real message
+    if conversation.title == "Nouvelle conversation" && user_message.present?
+      conversation.set_title_from(user_message)
+    end
+
+    response.headers["Content-Type"]      = "text/event-stream"
+    response.headers["Cache-Control"]     = "no-cache"
     response.headers["X-Accel-Buffering"] = "no"
 
     sse = SSE.new(response.stream, retry: 300)
 
     begin
-      SkincareChatService.new(current_user).chat(user_message, image: image) do |token|
+      # Send conversation_id back to client so it can update the URL
+      sse.write({ conversation_id: conversation.id }.to_json, event: "init")
+
+      SkincareChatService.new(current_user, conversation).chat(user_message, image: image) do |token|
         sse.write({ token: token }.to_json, event: "token")
       end
       sse.write({}.to_json, event: "done")
     rescue ActionController::Live::ClientDisconnected
-      # client a fermé la connexion
+      # client closed the connection
     ensure
       sse.close
     end

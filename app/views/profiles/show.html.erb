@@ -27,7 +27,6 @@
       <% if current_user.avatar.attached? %>
         <%= button_to avatar_profile_path,
               method: :delete,
-              data: { turbo_confirm: "Supprimer ta photo de profil ?" },
               class: "profile-avatar-delete",
               title: "Supprimer la photo" do %>
           <i class="fa-solid fa-trash"></i>

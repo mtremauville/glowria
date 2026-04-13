@@ -10,13 +10,18 @@ class SkincareChatService
 
   MODEL = "gpt-4o-mini"
 
-  def initialize(user)
-    @user = user
+  def initialize(user, conversation = nil)
+    @user         = user
+    @conversation = conversation
   end
 
   def chat(user_message, image: nil, &block)
     stored_content = user_message.presence || "📷 Photo envoyée"
-    @user.chat_messages.create!(role: "user", content: stored_content)
+    @user.chat_messages.create!(
+      role: "user",
+      content: stored_content,
+      conversation_id: @conversation&.id
+    )
 
     full_response = ""
 
@@ -33,7 +38,11 @@ class SkincareChatService
       block.call(token) if block_given?
     end
 
-    @user.chat_messages.create!(role: "assistant", content: full_response)
+    @user.chat_messages.create!(
+      role: "assistant",
+      content: full_response,
+      conversation_id: @conversation&.id
+    )
     full_response
   end
 
@@ -50,9 +59,5 @@ class SkincareChatService
       - Objectifs : #{Array(@user.skin_goals).join(", ")}
       - Collection actuelle : #{products.presence || "aucun produit encore"}
     CTX
-  end
-
-  def history
-    @user.chat_messages.order(created_at: :asc).last(10)
   end
 end

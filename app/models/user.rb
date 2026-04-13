@@ -6,6 +6,7 @@ class User < ApplicationRecord
   has_many :user_products, dependent: :destroy
   has_many :products, through: :user_products
   has_many :routines, dependent: :destroy
+  has_many :conversations, dependent: :destroy
   has_many :chat_messages, dependent: :destroy
 
   google_providers = ENV["GOOGLE_CLIENT_ID"].present? ? [:google_oauth2] : []

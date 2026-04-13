@@ -2,10 +2,11 @@
 
 <div class="chat-page"
      data-controller="chat"
-     data-chat-avatar-url-value="<%= current_user.avatar.attached? ? url_for(current_user.avatar.variant(resize_to_fill: [40, 40])) : '' %>">
+     data-chat-avatar-url-value="<%= current_user.avatar.attached? ? url_for(current_user.avatar.variant(resize_to_fill: [40, 40])) : '' %>"
+     data-chat-conversation-id-value="<%= @conversation.id %>">
   <div class="chat-shell">
 
-    <%= render "shared/chat_sidebar", current_conversation: nil %>
+    <%= render "shared/chat_sidebar", current_conversation: @conversation %>
 
     <main class="chat-main">
       <div class="chat-panel">
@@ -13,7 +14,7 @@
         <div class="chat-header">
           <div>
             <p class="chat-header__eyebrow">GLOWRIA AI</p>
-            <h2 class="chat-header__title">Assistant Skincare</h2>
+            <h2 class="chat-header__title"><%= @conversation.title %></h2>
           </div>
           <div class="chat-header__status">
             <span class="chat-status-dot"></span>
@@ -22,30 +23,26 @@
         </div>
 
         <div class="chat-messages" data-chat-target="messages">
-          <div class="chat-welcome">
-            <div class="chat-welcome__icon">
-              <i class="fa-solid fa-wand-magic-sparkles"></i>
+
+          <% @messages.each do |msg| %>
+            <div class="chat-message <%= msg.role == 'user' ? 'chat-message--user' : 'chat-message--assistant' %>">
+              <div class="chat-message__avatar">
+                <% if msg.role == "user" %>
+                  <% if current_user.avatar.attached? %>
+                    <%= image_tag current_user.avatar.variant(resize_to_fill: [40, 40]),
+                          class: "chat-avatar-img", alt: "" %>
+                  <% else %>
+                    <i class="fa-solid fa-user"></i>
+                  <% end %>
+                <% else %>
+                  <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <% end %>
+              </div>
+              <div class="chat-message__bubble">
+                <%= simple_format(msg.content) %>
+              </div>
             </div>
-            <p class="chat-welcome__title">Pose ta première question</p>
-            <p class="chat-welcome__subtitle">
-              Je t'aide à comprendre tes produits,
-              éviter les irritations et créer la meilleure routine.
-            </p>
-            <div class="chat-suggestions">
-              <% [
-                "Puis-je utiliser le rétinol avec de la vitamine C ?",
-                "Quelle est ma routine optimale ce soir ?",
-                "Quels produits éviter après le soleil ?"
-              ].each do |suggestion| %>
-                <button type="button"
-                  class="chat-suggestion-btn"
-                  data-action="click->chat#send"
-                  data-message="<%= suggestion %>">
-                  <%= suggestion %>
-                </button>
-              <% end %>
-            </div>
-          </div>
+          <% end %>
 
           <div class="chat-typing" data-chat-target="typing" hidden>
             <span></span><span></span><span></span>
@@ -53,7 +50,9 @@
         </div>
 
         <form class="chat-form" data-action="submit->chat#send">
-          <input type="hidden" name="conversation_id" data-chat-target="conversationId" value="">
+          <input type="hidden" name="conversation_id"
+                 data-chat-target="conversationId"
+                 value="<%= @conversation.id %>">
 
           <div data-chat-target="photoPreview" hidden class="chat-photo-preview">
             <img data-chat-target="photoImg" alt="" class="chat-photo-preview__img">
@@ -86,7 +85,7 @@
             </button>
             <textarea data-chat-target="input"
                       data-action="keydown->chat#handleKeydown"
-                      placeholder="Pose ta question skincare…"
+                      placeholder="Continue la conversation…"
                       rows="1"
                       class="chat-input"></textarea>
             <button type="submit" data-chat-target="submit" class="chat-submit">
