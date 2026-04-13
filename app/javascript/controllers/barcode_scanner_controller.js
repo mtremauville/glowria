@@ -16,13 +16,15 @@ export default class extends Controller {
   static values  = { lookupUrl: String }
 
   connect() {
-    this.debounceTimer    = null
-    this.stream           = null
-    this.scanAnimFrame    = null
-    this.scanning         = false
-    this.lastBarcode      = null
+    this.debounceTimer = null
+    this.stream        = null
+    this.scanAnimFrame = null
+    this.scanning      = false
+    this.lastBarcode   = null
+    this.zxingControls = null
 
     // BarcodeDetector natif (Chrome 83+, Edge 83+, Safari 17.4+)
+    // Sinon fallback ZXing chargé dynamiquement dans startZxingScan()
     if ("BarcodeDetector" in window) {
       this.detector = new BarcodeDetector({
         formats: ["ean_13", "ean_8", "upc_a", "upc_e", "code_128"]
@@ -55,27 +57,26 @@ export default class extends Controller {
   }
 
   async startCamera() {
-    if (!this.detector) {
-      this.setFeedback("error",
-        "Scanner non disponible sur ce navigateur. Saisis le code-barre manuellement.")
-      return
-    }
-
     try {
       this.stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: "environment", width: { ideal: 1280 } }
       })
 
-      this.videoTarget.srcObject = this.stream
-      await this.videoTarget.play()
-
       this.cameraViewTarget.hidden = false
       this.cameraBtnTarget.innerHTML = '<i class="fa-solid fa-xmark"></i><span>Fermer la caméra</span>'
-      this.scanning = true
+      this.scanning    = true
       this.lastBarcode = null
-
       this.setFeedback("loading", "Pointe la caméra vers le code-barre…")
-      this.scanLoop()
+
+      if (this.detector) {
+        // Chemin natif : BarcodeDetector disponible
+        this.videoTarget.srcObject = this.stream
+        await this.videoTarget.play()
+        this.scanLoop()
+      } else {
+        // Fallback ZXing : gère lui-même srcObject et play()
+        await this.startZxingScan()
+      }
 
     } catch (err) {
       const msg = err.name === "NotAllowedError"
@@ -85,8 +86,37 @@ export default class extends Controller {
     }
   }
 
+  // ── Fallback ZXing (iOS Safari et autres navigateurs sans BarcodeDetector) ──
+  async startZxingScan() {
+    const { BrowserMultiFormatReader } = await import("@zxing/browser")
+    const reader = new BrowserMultiFormatReader()
+
+    this.zxingControls = await reader.decodeFromStream(
+      this.stream,
+      this.videoTarget,
+      (result, _err) => {
+        if (!result || !this.scanning) return
+
+        const code = result.getText()
+        if (code === this.lastBarcode) return
+
+        this.lastBarcode = code
+        this.flashOverlay()
+        this.stopCamera()
+        this.inputTarget.value = code
+        this.fetchProduct(code)
+      }
+    )
+  }
+
   stopCamera() {
     this.scanning = false
+
+    if (this.zxingControls) {
+      this.zxingControls.stop()
+      this.zxingControls = null
+    }
+
     cancelAnimationFrame(this.scanAnimFrame)
 
     if (this.stream) {
@@ -100,6 +130,7 @@ export default class extends Controller {
     }
   }
 
+  // ── Boucle de scan native (BarcodeDetector) ─────────────────────
   scanLoop() {
     if (!this.scanning) return
 
@@ -111,7 +142,6 @@ export default class extends Controller {
         if (barcodes.length > 0) {
           const code = barcodes[0].rawValue
 
-          // Dédoublonnage : on n'envoie pas deux fois le même code
           if (code !== this.lastBarcode) {
             this.lastBarcode = code
             this.flashOverlay()
