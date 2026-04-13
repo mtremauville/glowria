@@ -161,7 +161,7 @@ glowria/
    - Efficient database queries
 
 3. **Production Deployment**
-   - Docker containerization best practices
+   - Deployment best practices
    - Environment variable management
    - Zero-downtime deployments with Kamal
 
