@@ -1,0 +1,17 @@
+<%# app/views/admin/users/edit.html.erb %>
+<div class="container" style="max-width: 560px">
+
+  <div class="admin-header">
+    <div>
+      <span class="admin-badge"><i class="fa-solid fa-shield-halved"></i> Administration</span>
+      <h1 class="admin-header__title">Modifier un utilisateur</h1>
+      <p class="admin-header__sub"><%= @user.email %></p>
+    </div>
+    <%= link_to admin_users_path, class: "btn-glow btn-glow--ghost btn-glow--sm" do %>
+      <i class="fa-solid fa-arrow-left"></i> Retour
+    <% end %>
+  </div>
+
+  <%= render "form", user: @user %>
+
+</div>

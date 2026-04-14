@@ -1,0 +1,160 @@
+<%# app/views/admin/dashboard/index.html.erb %>
+<div class="container" style="max-width: 1000px">
+
+  <%# ── Header ── %>
+  <div class="admin-header">
+    <div>
+      <span class="admin-badge"><i class="fa-solid fa-shield-halved"></i> Administration</span>
+      <h1 class="admin-header__title">Tableau de bord</h1>
+    </div>
+    <%= link_to new_admin_user_path, class: "btn-glow btn-glow--primary btn-glow--sm" do %>
+      <i class="fa-solid fa-user-plus"></i> Nouvel utilisateur
+    <% end %>
+  </div>
+
+  <%# ── Stats ── %>
+  <div class="admin-stats">
+    <div class="admin-stat">
+      <span class="admin-stat__icon"><i class="fa-solid fa-users"></i></span>
+      <div>
+        <span class="admin-stat__value"><%= @users_count %></span>
+        <span class="admin-stat__label">Utilisateurs</span>
+      </div>
+    </div>
+    <div class="admin-stat">
+      <span class="admin-stat__icon"><i class="fa-solid fa-bottle-droplet"></i></span>
+      <div>
+        <span class="admin-stat__value"><%= @products_count %></span>
+        <span class="admin-stat__label">Produits utilisés</span>
+      </div>
+    </div>
+    <div class="admin-stat">
+      <span class="admin-stat__icon"><i class="fa-solid fa-heart"></i></span>
+      <div>
+        <span class="admin-stat__value"><%= @user_products_count %></span>
+        <span class="admin-stat__label">Ajouts en collection</span>
+      </div>
+    </div>
+  </div>
+
+  <%# ── Utilisateurs ── %>
+  <div class="glow-card" style="margin-bottom: 2rem">
+    <div class="glow-card__header">
+      <h2 class="glow-card__title"><i class="fa-solid fa-users"></i> Utilisateurs</h2>
+      <%= link_to admin_users_path, class: "btn-glow btn-glow--ghost btn-glow--sm" do %>
+        Voir tout <i class="fa-solid fa-arrow-right"></i>
+      <% end %>
+    </div>
+
+    <% if @users.any? %>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Nom / Email</th>
+              <th>Produits</th>
+              <th>Admin</th>
+              <th>Inscrit le</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @users.each do |user| %>
+              <tr>
+                <td>
+                  <div class="admin-user-cell">
+                    <% if user.avatar.attached? %>
+                      <%= image_tag user.avatar.variant(resize_to_fill: [32, 32]), class: "admin-avatar", alt: "" %>
+                    <% else %>
+                      <span class="admin-avatar admin-avatar--initials">
+                        <%= (user.display_name.presence || user.email)[0].upcase %>
+                      </span>
+                    <% end %>
+                    <div>
+                      <% if user.display_name.present? %>
+                        <span class="admin-user-cell__name"><%= user.display_name %></span>
+                      <% end %>
+                      <span class="admin-user-cell__email"><%= user.email %></span>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="admin-count"><%= @products_counts[user.id].to_i %></span></td>
+                <td>
+                  <% if user.admin? %>
+                    <span class="admin-badge admin-badge--sm"><i class="fa-solid fa-shield-halved"></i> Admin</span>
+                  <% end %>
+                </td>
+                <td class="admin-date"><%= user.created_at.strftime("%d/%m/%Y") %></td>
+                <td>
+                  <div class="admin-row-actions">
+                    <%= link_to edit_admin_user_path(user), class: "btn-glow btn-glow--ghost btn-glow--sm" do %>
+                      <i class="fa-solid fa-pen"></i>
+                    <% end %>
+                    <% unless user == current_user %>
+                      <%= button_to admin_user_path(user), method: :delete, class: "btn-glow btn-glow--ghost btn-glow--sm admin-btn-delete",
+                            data: { turbo_confirm: "Supprimer le compte de #{user.email} ?" } do %>
+                        <i class="fa-solid fa-xmark"></i>
+                      <% end %>
+                    <% end %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="empty-state">
+        <span class="empty-state__icon"><i class="fa-solid fa-users"></i></span>
+        <p class="empty-state__title">Aucun utilisateur</p>
+      </div>
+    <% end %>
+  </div>
+
+  <%# ── Produits utilisés ── %>
+  <div class="glow-card">
+    <div class="glow-card__header">
+      <h2 class="glow-card__title"><i class="fa-solid fa-bottle-droplet"></i> Produits les plus utilisés</h2>
+    </div>
+
+    <% if @top_products.any? %>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Produit</th>
+              <th>Marque</th>
+              <th>Catégorie</th>
+              <th>Utilisateurs</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @top_products.each do |product| %>
+              <tr>
+                <td>
+                  <div class="admin-product-cell">
+                    <% if product.display_image %>
+                      <%= image_tag product.display_image, class: "admin-product-img", alt: "" %>
+                    <% else %>
+                      <span class="admin-product-img admin-product-img--placeholder"><i class="fa-solid fa-bottle-droplet"></i></span>
+                    <% end %>
+                    <%= link_to product.name, product_path(product), class: "admin-product-cell__name" %>
+                  </div>
+                </td>
+                <td class="admin-muted"><%= product.brand %></td>
+                <td><% if product.category.present? %><span class="prod-header__category"><%= product.category %></span><% end %></td>
+                <td><span class="admin-count"><%= product.users_count %></span></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="empty-state">
+        <span class="empty-state__icon"><i class="fa-solid fa-bottle-droplet"></i></span>
+        <p class="empty-state__title">Aucun produit utilisé</p>
+      </div>
+    <% end %>
+  </div>
+
+</div>
