@@ -1,6 +1,7 @@
 # app/controllers/products_controller.rb
 class ProductsController < ApplicationController
   before_action :authenticate_user!
+  before_action :set_product, only: [:edit, :update]
 
   def index
     @user_products = current_user.user_products
@@ -20,7 +21,6 @@ class ProductsController < ApplicationController
   end
 
   def edit
-    @product = current_user.products.find(params[:id])
     @ingredients_text = @product.product_ingredients
                                  .order(:position)
                                  .map { |pi| pi.ingredient.inci_name.presence || pi.ingredient.name }
@@ -28,8 +28,6 @@ class ProductsController < ApplicationController
   end
 
   def update
-    @product = current_user.products.find(params[:id])
-
     ActiveRecord::Base.transaction do
       @product.update!(product_update_params)
       @product.photo.attach(params.dig(:product, :photo)) if params.dig(:product, :photo).present?
@@ -98,6 +96,10 @@ class ProductsController < ApplicationController
       end
       @product.product_ingredients.create!(ingredient: ingredient, position: index + 1)
     end
+  end
+
+  def set_product
+    @product = current_user.admin? ? Product.find(params[:id]) : current_user.products.find(params[:id])
   end
 
   def manual_params
