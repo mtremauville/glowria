@@ -2426,6 +2426,16 @@ hr {
   margin-top: 5px;
 }
 
+.routine-step__img {
+  display: block;
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  border-radius: 6px;
+  margin-top: 8px;
+  background: #f5f3ef;
+}
+
 /* ── Product row (liste avec molécules) ── */
 .product-row {
   padding: 14px 16px;
