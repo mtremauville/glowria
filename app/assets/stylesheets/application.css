@@ -3986,3 +3986,14 @@ details[open] .add-section__chevron { transform: rotate(180deg); }
 .confirm-dialog--danger .confirm-dialog__btn--confirm:hover {
   background: #b91c1c;
 }
+
+/* ── Admin hero variant ── */
+.db-hero--admin {
+  background: linear-gradient(135deg, #2a1f0e 0%, #1C1916 60%, #3d2a10 100%);
+}
+.db-hero--admin .db-hero__eyebrow {
+  color: var(--amber);
+}
+.db-hero--admin .db-stat__value {
+  color: var(--amber);
+}
