@@ -2,7 +2,8 @@
 Rails.application.routes.draw do
   devise_for :users, controllers: { omniauth_callbacks: "users/omniauth_callbacks" }
 
-  root "dashboard#index"
+  root "landing#index"
+  get "/dashboard", to: "dashboard#index", as: :dashboard
 
   get "up" => "rails/health#show", as: :rails_health_check
 
