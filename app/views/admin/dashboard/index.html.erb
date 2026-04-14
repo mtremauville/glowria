@@ -139,7 +139,7 @@
               <% end %>
             </div>
             <span class="slot-pill slot-pill--both db-product-card__slot">
-              <i class="fa-solid fa-users"></i> <%= product.users_count %>
+              <i class="fa-solid fa-users"></i> <%= @top_products_counts[product.id].to_i %>
             </span>
             <div class="db-product-card__info">
               <p class="db-product-card__name"><%= product.name %></p>
