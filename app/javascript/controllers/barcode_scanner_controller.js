@@ -167,6 +167,7 @@ export default class extends Controller {
     this.setFeedback("loading", "Recherche en cours…")
     this.previewTarget.innerHTML = ""
     this.submitTarget.disabled = true
+    this.submitTarget.classList.add("add-submit-btn--disabled")
 
     try {
       const res = await fetch(`${this.lookupUrlValue}?barcode=${barcode}`, {
@@ -216,6 +217,7 @@ export default class extends Controller {
       <p class="scan-found">✓ Produit identifié — clique sur "Ajouter à ma collection"</p>
     `
     this.submitTarget.disabled = false
+    this.submitTarget.classList.remove("add-submit-btn--disabled")
   }
 
   setFeedback(type, message) {
@@ -224,6 +226,7 @@ export default class extends Controller {
     if (type === "error") {
       this.previewTarget.innerHTML = ""
       this.submitTarget.disabled = true
+      this.submitTarget.classList.add("add-submit-btn--disabled")
     }
   }
 }
