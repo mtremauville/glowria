@@ -1604,7 +1604,7 @@ details[open] summary::before { content: '－ '; }
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 8px;
-  margin-bottom: 0.5rem;
+  margin: 0.5rem;
 }
 
 @media (max-width: 480px) {
@@ -1644,6 +1644,7 @@ details[open] summary::before { content: '－ '; }
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  margin:0.5rem;
 }
 
 .checkbox-chip {

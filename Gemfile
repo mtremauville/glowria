@@ -73,4 +73,4 @@ gem "httparty"          # appels API Open Food Facts (codes-barres)
 gem "friendly_id"       # slugs propres
 
 gem "redis"             # pour Action Cable
-gem "dotenv-rails", groups: [:development, :test]
+gem "dotenv-rails", groups: [ :development, :test ]
