@@ -16,6 +16,9 @@
         <li><%= link_to conflicts_path,     class: "navbar-link #{'navbar-link--active' if current_page?(conflicts_path)}"     do %><i class="fa-solid fa-triangle-exclamation"></i><span>Interactions</span><% end %></li>
         <li><%= link_to routines_path,      class: "navbar-link #{'navbar-link--active' if current_page?(routines_path)}"      do %><i class="fa-solid fa-clipboard-list"></i><span>Routines</span><% end %></li>
         <li><%= link_to chat_messages_path, class: "navbar-link #{'navbar-link--active' if current_page?(chat_messages_path)}" do %><i class="fa-solid fa-wand-magic-sparkles"></i><span>Assistant IA</span><% end %></li>
+        <% if current_user.admin? %>
+          <li><%= link_to admin_root_path, class: "navbar-link navbar-link--admin #{'navbar-link--active' if request.path.start_with?('/admin')}" do %><i class="fa-solid fa-shield-halved"></i><span>Admin</span><% end %></li>
+        <% end %>
       </ul>
 
       <%# ── Actions desktop ── %>
@@ -55,6 +58,9 @@
         <%= link_to conflicts_path,     class: "drawer-link #{'drawer-link--active' if current_page?(conflicts_path)}"     do %><i class="fa-solid fa-triangle-exclamation"></i> Interactions<% end %>
         <%= link_to routines_path,      class: "drawer-link #{'drawer-link--active' if current_page?(routines_path)}"      do %><i class="fa-solid fa-clipboard-list"></i> Routines<% end %>
         <%= link_to chat_messages_path, class: "drawer-link #{'drawer-link--active' if current_page?(chat_messages_path)}" do %><i class="fa-solid fa-wand-magic-sparkles"></i> Assistant IA<% end %>
+        <% if current_user.admin? %>
+          <%= link_to admin_root_path, class: "drawer-link drawer-link--admin #{'drawer-link--active' if request.path.start_with?('/admin')}" do %><i class="fa-solid fa-shield-halved"></i> Administration<% end %>
+        <% end %>
         <div class="drawer-divider"></div>
         <%= link_to new_product_path, class: "drawer-link drawer-link--add" do %>
           <i class="fa-solid fa-plus"></i> Ajouter un produit
