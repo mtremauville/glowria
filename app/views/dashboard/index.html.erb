@@ -179,8 +179,8 @@
         <% @user_products.first(6).each do |up| %>
           <div class="db-product-card">
             <div class="db-product-card__thumb">
-              <% if up.product.image_url.present? %>
-                <%= image_tag up.product.image_url, alt: up.product.name %>
+              <% if up.product.display_image %>
+                <%= image_tag up.product.display_image, alt: up.product.name %>
               <% else %>
                 <span class="db-product-card__emoji"><i class="fa-solid fa-bottle-droplet"></i></span>
               <% end %>

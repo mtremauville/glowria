@@ -19,12 +19,37 @@ class ProductsController < ApplicationController
     # Formulaire ajout manuel ou scan
   end
 
+  def edit
+    @product = current_user.products.find(params[:id])
+    @ingredients_text = @product.product_ingredients
+                                 .order(:position)
+                                 .map { |pi| pi.ingredient.inci_name.presence || pi.ingredient.name }
+                                 .join("\n")
+  end
+
+  def update
+    @product = current_user.products.find(params[:id])
+
+    ActiveRecord::Base.transaction do
+      @product.update!(product_update_params)
+      @product.photo.attach(params.dig(:product, :photo)) if params.dig(:product, :photo).present?
+      resync_ingredients if params[:ingredients_text].present?
+    end
+
+    redirect_to product_path(@product), notice: "#{@product.name} mis à jour ✨"
+  rescue ActiveRecord::RecordInvalid => e
+    @ingredients_text = params[:ingredients_text]
+    flash.now[:alert] = e.message
+    render :edit, status: :unprocessable_entity
+  end
+
   # POST /products?barcode=3600523816071
   def create
     result = ProductImportService.new(
       current_user,
       barcode:     params[:barcode],
-      manual_data: manual_params
+      manual_data: manual_params,
+      photo:       params.dig(:product, :photo)
     ).import
 
     if result[:success]
@@ -60,11 +85,26 @@ class ProductsController < ApplicationController
 
   private
 
+  def product_update_params
+    params.require(:product).permit(:name, :brand, :category, :description, :barcode)
+  end
+
+  def resync_ingredients
+    inci_names = params[:ingredients_text].split("\n").map(&:strip).reject(&:blank?)
+    @product.product_ingredients.destroy_all
+    inci_names.each_with_index do |inci_name, index|
+      ingredient = Ingredient.find_or_create_by!(inci_name: inci_name.downcase) do |i|
+        i.name = inci_name.humanize
+      end
+      @product.product_ingredients.create!(ingredient: ingredient, position: index + 1)
+    end
+  end
+
   def manual_params
     return nil if params[:product].blank?
 
     product_params = params.require(:product)
-                           .permit(:name, :brand, :category, :description, ingredients: [])
+                           .permit(:name, :brand, :category, :description, :barcode, :photo, ingredients: [])
                            .to_h.symbolize_keys
 
     # Les ingrédients viennent soit de product[ingredients][] (scan composition)

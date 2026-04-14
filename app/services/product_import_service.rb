@@ -1,8 +1,9 @@
 class ProductImportService
-  def initialize(user, barcode: nil, manual_data: nil)
+  def initialize(user, barcode: nil, manual_data: nil, photo: nil)
     @user        = user
     @barcode     = barcode
     @manual_data = manual_data
+    @photo       = photo
   end
 
   def import
@@ -16,6 +17,7 @@ class ProductImportService
 
     ActiveRecord::Base.transaction do
       product = find_or_create_product(raw)
+      product.photo.attach(@photo) if @photo.present? && !product.photo.attached?
       sync_ingredients(product, raw[:ingredients])
       user_product = attach_to_user(product)
 
@@ -26,7 +28,8 @@ class ProductImportService
         conflicts:    detect_conflicts_for(product)
       }
     end
-  rescue ActiveRecord::RecordInvalid => e
+  rescue StandardError => e
+    Rails.logger.error("ProductImportService error: #{e.class} — #{e.message}")
     { success: false, error: e.message }
   end
 
@@ -65,10 +68,11 @@ class ProductImportService
   end
 
   def attach_to_user(product)
-    @user.user_products.find_or_create_by!(product: product) do |up|
-      up.active     = true
-      up.usage_slot = "both"
-    end
+    up = @user.user_products.find_or_initialize_by(product: product)
+    up.active     = true
+    up.usage_slot = up.usage_slot.presence || "both"
+    up.save!
+    up
   end
 
   def detect_conflicts_for(product)

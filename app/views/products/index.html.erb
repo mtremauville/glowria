@@ -23,8 +23,8 @@
         <% molecules = up.product.product_ingredients.sort_by(&:position).map { |pi| [pi.ingredient.name, pi.ingredient.function] } %>
         <div class="product-row">
           <div class="product-row__main">
-            <% if up.product.image_url.present? %>
-              <%= image_tag up.product.image_url, alt: up.product.name, class: "product-chip__img" %>
+            <% if up.product.display_image %>
+              <%= image_tag up.product.display_image, alt: up.product.name, class: "product-chip__img" %>
             <% else %>
               <div class="product-chip__placeholder"><i class="fa-solid fa-bottle-droplet"></i></div>
             <% end %>
@@ -41,6 +41,11 @@
               <i class="fa-solid <%= slot_icons.fetch(up.usage_slot.to_s, 'fa-circle-half-stroke') %>"></i>
               <%= slot_labels.fetch(up.usage_slot.to_s, "AM/PM") %>
             </span>
+
+            <%= link_to edit_product_path(up.product),
+                  class: "btn-glow btn-glow--ghost btn-glow--sm" do %>
+              <i class="fa-solid fa-pen"></i>
+            <% end %>
 
             <%= button_to user_product_path(up),
                   method: :delete,

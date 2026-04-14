@@ -1,0 +1,154 @@
+<%# app/views/products/edit.html.erb %>
+<div class="container" style="max-width: 600px">
+
+  <%= link_to product_path(@product), class: "prod-back" do %>
+    <i class="fa-solid fa-arrow-left"></i> <%= @product.name %>
+  <% end %>
+
+  <div class="add-product-header">
+    <h1 class="add-product-header__title">Modifier le produit</h1>
+    <p class="add-product-header__sub">Mets à jour les informations, la composition ou la photo.</p>
+  </div>
+
+  <%= form_with url: product_path(@product), method: :patch, html: { multipart: true } do |f| %>
+
+    <%# ═══════════════════════════════════════════
+        1. INFORMATIONS
+    ═══════════════════════════════════════════ %>
+    <div class="add-section">
+      <div class="add-section__header">
+        <div class="add-section__label">
+          <i class="fa-solid fa-pen-to-square"></i>
+          Informations
+        </div>
+      </div>
+
+      <div class="add-section__body">
+
+        <div class="add-form-group">
+          <%= f.label :name, "Nom du produit", class: "add-form-label" %>
+          <%= f.text_field :name, class: "add-form-input", placeholder: "ex : Sérum Vitamine C" %>
+        </div>
+
+        <div class="add-form-group">
+          <%= f.label :brand, "Marque", class: "add-form-label" %>
+          <%= f.text_field :brand, class: "add-form-input", placeholder: "ex : The Ordinary" %>
+        </div>
+
+        <div class="add-form-group">
+          <%= f.label :category, "Catégorie", class: "add-form-label" %>
+          <%= f.select :category,
+                options_for_select([
+                  ["Nettoyant", "nettoyant"], ["Sérum", "serum"],
+                  ["Crème", "creme"], ["SPF", "spf"],
+                  ["Tonique", "tonique"], ["Masque", "masque"],
+                  ["Exfoliant", "exfoliant"], ["Autre", "autre"]
+                ], @product.category), {}, class: "add-form-select" %>
+        </div>
+
+        <div class="add-form-group">
+          <%= f.label :description, "Description (optionnel)", class: "add-form-label" %>
+          <%= f.text_area :description, class: "add-form-input", rows: 2,
+                placeholder: "ex : Sérum léger à 10% de Vitamine C" %>
+        </div>
+
+        <div class="add-form-group">
+          <%= f.label :barcode, "Code-barre (optionnel)", class: "add-form-label" %>
+          <%= f.text_field :barcode, class: "add-form-input",
+                placeholder: "ex : 3600523816071", inputmode: "numeric", autocomplete: "off" %>
+        </div>
+
+      </div>
+    </div>
+
+    <%# ═══════════════════════════════════════════
+        2. PHOTO
+    ═══════════════════════════════════════════ %>
+    <div class="add-section">
+      <div class="add-section__header">
+        <div class="add-section__label">
+          <i class="fa-solid fa-camera"></i>
+          Photo
+        </div>
+      </div>
+
+      <div class="add-section__body" data-controller="photo-capture">
+
+        <% if @product.display_image %>
+          <div class="edit-current-photo">
+            <%= image_tag @product.display_image, alt: @product.name, class: "edit-current-photo__img" %>
+            <p class="edit-current-photo__label">Photo actuelle — prends-en une nouvelle pour la remplacer</p>
+          </div>
+        <% end %>
+
+        <button type="button"
+                data-photo-capture-target="cameraBtn"
+                data-action="click->photo-capture#openCamera"
+                class="scan-camera-btn scan-camera-btn--sm">
+          <i class="fa-solid fa-camera"></i>
+          <span><%= @product.display_image ? "Remplacer la photo" : "Prendre une photo" %></span>
+        </button>
+
+        <div data-photo-capture-target="cameraView" hidden class="scan-camera-view">
+          <video data-photo-capture-target="video"
+                 class="scan-video" playsinline muted autoplay></video>
+          <canvas data-photo-capture-target="canvas" hidden></canvas>
+          <button type="button" class="scan-capture-btn"
+                  data-action="click->photo-capture#capture">
+            <i class="fa-solid fa-circle-dot"></i> Capturer
+          </button>
+          <button type="button" class="scan-close-btn"
+                  data-action="click->photo-capture#closeCamera">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div data-photo-capture-target="preview" hidden class="photo-capture-preview">
+          <img data-photo-capture-target="previewImg" alt="Aperçu" class="photo-capture-preview__img">
+          <button type="button" class="photo-capture-preview__remove"
+                  data-action="click->photo-capture#remove">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <%= f.file_field :photo, accept: "image/*", class: "sr-only",
+              data: {
+                "photo-capture-target": "fileInput",
+                action: "change->photo-capture#onFileSelected"
+              } %>
+
+      </div>
+    </div>
+
+    <%# ═══════════════════════════════════════════
+        3. COMPOSITION
+    ═══════════════════════════════════════════ %>
+    <div class="add-section">
+      <div class="add-section__header">
+        <div class="add-section__label">
+          <i class="fa-solid fa-flask"></i>
+          Composition INCI
+        </div>
+        <span class="add-section__badge"><%= @product.product_ingredients.count %> ingrédients</span>
+      </div>
+
+      <div class="add-section__body">
+        <p class="edit-ingredients-hint">
+          <i class="fa-solid fa-circle-info"></i>
+          Un ingrédient par ligne, dans l'ordre de la formule (du plus concentré au moins concentré).
+        </p>
+        <textarea name="ingredients_text"
+                  class="add-form-input edit-ingredients-textarea"
+                  rows="12"
+                  placeholder="AQUA&#10;GLYCERIN&#10;NIACINAMIDE&#10;..."><%= @ingredients_text %></textarea>
+      </div>
+    </div>
+
+    <div class="edit-actions">
+      <%= f.submit "Enregistrer les modifications", class: "add-submit-btn" %>
+      <%= link_to "Annuler", product_path(@product), class: "edit-cancel-btn" %>
+    </div>
+
+  <% end %>
+
+</div>

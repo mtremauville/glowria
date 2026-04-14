@@ -11,7 +11,7 @@ Rails.application.routes.draw do
   get "service-worker" => "pwa#service_worker", as: :pwa_service_worker
   get "offline" => "pwa#offline", as: :pwa_offline
 
-  resources :products, only: [:index, :show, :new, :create] do
+  resources :products, only: [:index, :show, :new, :create, :edit, :update] do
     collection do
       get  :lookup
       post :scan_composition

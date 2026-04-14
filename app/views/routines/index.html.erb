@@ -89,8 +89,8 @@
                         <% end %>
                       </div>
                     <% end %>
-                    <% if product.image_url.present? %>
-                      <%= image_tag product.image_url, alt: product.name, class: "routine-step__img" %>
+                    <% if product.display_image %>
+                      <%= image_tag product.display_image, alt: product.name, class: "routine-step__img" %>
                     <% end %>
                   </div>
                 </div>

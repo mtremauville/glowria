@@ -1,16 +1,21 @@
 <%# app/views/products/show.html.erb %>
 <div class="container" style="max-width: 780px">
 
-  <%# ── Back ── %>
-  <%= link_to products_path, class: "prod-back" do %>
-    <i class="fa-solid fa-arrow-left"></i> Ma collection
-  <% end %>
+  <%# ── Back + actions ── %>
+  <div class="prod-topbar">
+    <%= link_to products_path, class: "prod-back" do %>
+      <i class="fa-solid fa-arrow-left"></i> Ma collection
+    <% end %>
+    <%= link_to edit_product_path(@product), class: "btn-glow btn-glow--ghost btn-glow--sm" do %>
+      <i class="fa-solid fa-pen"></i> Modifier
+    <% end %>
+  </div>
 
   <%# ── Header produit ── %>
   <div class="prod-header">
     <div class="prod-header__thumb">
-      <% if @product.image_url.present? %>
-        <%= image_tag @product.image_url, alt: @product.name, class: "prod-header__img" %>
+      <% if @product.display_image %>
+        <%= image_tag @product.display_image, alt: @product.name, class: "prod-header__img" %>
       <% else %>
         <i class="fa-solid fa-bottle-droplet prod-header__icon"></i>
       <% end %>

@@ -206,7 +206,7 @@
     </summary>
 
     <div class="add-section__body">
-      <%= form_with url: products_path, method: :post do |f| %>
+      <%= form_with url: products_path, method: :post, html: { multipart: true } do |f| %>
 
         <div class="add-form-group">
           <%= f.label :name, "Nom du produit", class: "add-form-label" %>
@@ -229,6 +229,64 @@
                   ["Tonique", "tonique"], ["Masque", "masque"],
                   ["Exfoliant", "exfoliant"], ["Autre", "autre"]
                 ]), {}, name: "product[category]", class: "add-form-select" %>
+        </div>
+
+        <div class="add-form-group">
+          <%= f.label :barcode, "Code-barre (optionnel)", class: "add-form-label" %>
+          <%= f.text_field :barcode, name: "product[barcode]", class: "add-form-input",
+                placeholder: "ex : 3600523816071", inputmode: "numeric", autocomplete: "off" %>
+        </div>
+
+        <div class="add-form-group" data-controller="photo-capture">
+
+          <span class="add-form-label">Photo du produit (optionnel)</span>
+
+          <%# Bouton caméra %>
+          <button type="button"
+                  data-photo-capture-target="cameraBtn"
+                  data-action="click->photo-capture#openCamera"
+                  class="scan-camera-btn scan-camera-btn--sm">
+            <i class="fa-solid fa-camera"></i>
+            <span>Prendre une photo</span>
+          </button>
+
+          <%# Vue caméra live %>
+          <div data-photo-capture-target="cameraView" hidden class="scan-camera-view">
+            <video data-photo-capture-target="video"
+                   class="scan-video" playsinline muted autoplay></video>
+            <canvas data-photo-capture-target="canvas" hidden></canvas>
+            <button type="button"
+                    class="scan-capture-btn"
+                    data-action="click->photo-capture#capture">
+              <i class="fa-solid fa-circle-dot"></i> Capturer
+            </button>
+            <button type="button"
+                    class="scan-close-btn"
+                    data-action="click->photo-capture#closeCamera">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+
+          <%# Aperçu photo capturée %>
+          <div data-photo-capture-target="preview" hidden class="photo-capture-preview">
+            <img data-photo-capture-target="previewImg"
+                 alt="Aperçu" class="photo-capture-preview__img">
+            <button type="button"
+                    class="photo-capture-preview__remove"
+                    data-action="click->photo-capture#remove">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+
+          <%# File input caché (fallback + récepteur du blob) %>
+          <%= f.file_field :photo, name: "product[photo]",
+                accept: "image/*",
+                class: "sr-only",
+                data: {
+                  "photo-capture-target": "fileInput",
+                  action: "change->photo-capture#onFileSelected"
+                } %>
+
         </div>
 
         <%= f.submit "Ajouter", class: "add-submit-btn" %>

@@ -3005,6 +3005,37 @@ details[open] .add-section__chevron { transform: rotate(180deg); }
 }
 .scan-camera-btn:hover { background: var(--sage-dark); }
 .scan-camera-btn i { font-size: 0.9rem; }
+.scan-camera-btn--sm { padding: 0.6rem 1rem; font-size: 0.8rem; }
+
+.photo-capture-preview {
+  position: relative;
+  display: inline-block;
+  margin-top: 0.5rem;
+}
+.photo-capture-preview__img {
+  display: block;
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--cream-border);
+}
+.photo-capture-preview__remove {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #1C1916;
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+}
 
 /* ── Capture button (inside camera view) ── */
 .scan-capture-btn {
@@ -3195,6 +3226,18 @@ details[open] .add-section__chevron { transform: rotate(180deg); }
 }
 .add-form-input:focus,
 .add-form-select:focus { outline: none; border-color: var(--text-primary); }
+
+.add-form-file {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1px dashed #c8c0b4;
+  border-radius: 6px;
+  background: #faf8f5;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.add-form-file:hover { border-color: var(--text-primary); }
 
 .add-submit-btn {
   display: block;
@@ -3497,6 +3540,72 @@ details[open] .add-section__chevron { transform: rotate(180deg); }
   transition: color 0.15s;
 }
 .prod-back:hover { color: var(--text-primary); text-decoration: none; }
+
+.prod-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 1.75rem 0 2rem;
+}
+.prod-topbar .prod-back { margin: 0; }
+
+/* ── Edit product ── */
+.edit-current-photo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background: #faf8f5;
+  border-radius: 8px;
+  border: 1px solid var(--cream-border);
+}
+.edit-current-photo__img {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+.edit-current-photo__label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.edit-ingredients-hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+.edit-ingredients-textarea {
+  font-family: monospace;
+  font-size: 0.8rem;
+  line-height: 1.7;
+  resize: vertical;
+}
+
+.edit-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+  margin-bottom: 2rem;
+}
+.edit-cancel-btn {
+  display: block;
+  text-align: center;
+  padding: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  border: 1px solid var(--cream-border);
+  border-radius: 6px;
+}
+.edit-cancel-btn:hover { color: var(--text-primary); border-color: var(--text-primary); }
 .prod-back i { font-size: 0.7rem; }
 
 /* ── Header ── */
