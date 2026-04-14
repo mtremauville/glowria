@@ -41,6 +41,9 @@ class ChatMessagesController < ApplicationController
       sse.write({}.to_json, event: "done")
     rescue ActionController::Live::ClientDisconnected
       # client closed the connection
+    rescue => e
+      Rails.logger.error("ChatMessagesController error: #{e.class} — #{e.message}")
+      sse.write({ error: "Une erreur est survenue. Réessaie dans un instant." }.to_json, event: "error")
     ensure
       sse.close
     end

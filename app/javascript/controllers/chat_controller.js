@@ -131,6 +131,8 @@ export default class extends Controller {
           }
         } else if (eventType === "done") {
           bubble.innerHTML = this.renderMarkdown(bubble.textContent)
+        } else if (eventType === "error") {
+          bubble.innerHTML = parsed.error || "Une erreur est survenue. Réessaie."
         }
 
         eventType = ""
@@ -138,8 +140,11 @@ export default class extends Controller {
     }
 
     // Ensure markdown is rendered if done event was missed
-    if (bubble.textContent && !bubble.innerHTML.includes("<")) {
+    if (bubble.dataset.started && !bubble.innerHTML.includes("<")) {
       bubble.innerHTML = this.renderMarkdown(bubble.textContent)
+    } else if (!bubble.dataset.started) {
+      // Stream closed without any token (API key manquante, timeout, etc.)
+      bubble.innerHTML = "Erreur de connexion. Réessaie dans un instant."
     }
   }
 
