@@ -241,12 +241,10 @@
           <div class="auth-group">
             <div class="auth-label-row">
               <%= f.label :password, "Mot de passe", class: "auth-label" %>
-              <% if @minimum_password_length %>
-                <span class="auth-label__hint"><%= @minimum_password_length %> car. min.</span>
-              <% end %>
             </div>
             <%= f.password_field :password, autocomplete: "new-password",
                   placeholder: "••••••••", class: "auth-input" %>
+            <span class="auth-label__hint">8 caractères min. · majuscule · minuscule · chiffre · caractère spécial</span>
           </div>
 
           <div class="auth-group">
