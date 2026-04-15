@@ -20,7 +20,7 @@
       <ul class="navbar-menu" id="navbar-menu">
         <li><%= link_to dashboard_path, class: "navbar-link #{'navbar-link--active' if current_page?(dashboard_path)}" do %><i class="fa-solid fa-house"></i><span>Accueil</span><% end %></li>
         <li><%= link_to products_path,      class: "navbar-link #{'navbar-link--active' if current_page?(products_path)}"      do %><i class="fa-solid fa-bottle-droplet"></i><span>Produits</span><% end %></li>
-        <li><%= link_to conflicts_path,     class: "navbar-link #{'navbar-link--active' if current_page?(conflicts_path)}"     do %><i class="fa-solid fa-triangle-exclamation"></i><span>Interactions</span><% end %></li>
+        <li><%= link_to conflicts_path, class: "navbar-link #{'navbar-link--active' if current_page?(conflicts_path)}", data: { action: "click->page-loader#show" } do %><i class="fa-solid fa-triangle-exclamation"></i><span>Interactions</span><% end %></li>
         <li><%= link_to routines_path,      class: "navbar-link #{'navbar-link--active' if current_page?(routines_path)}"      do %><i class="fa-solid fa-clipboard-list"></i><span>Routines</span><% end %></li>
         <li><%= link_to chat_messages_path, class: "navbar-link #{'navbar-link--active' if current_page?(chat_messages_path)}" do %><i class="fa-solid fa-wand-magic-sparkles"></i><span>Assistant IA</span><% end %></li>
         <% if current_user.admin? %>
@@ -62,7 +62,7 @@
       <div class="navbar-drawer__inner">
         <%= link_to dashboard_path, class: "drawer-link #{'drawer-link--active' if current_page?(dashboard_path)}" do %><i class="fa-solid fa-house"></i> Accueil<% end %>
         <%= link_to products_path,      class: "drawer-link #{'drawer-link--active' if current_page?(products_path)}"      do %><i class="fa-solid fa-bottle-droplet"></i> Produits<% end %>
-        <%= link_to conflicts_path,     class: "drawer-link #{'drawer-link--active' if current_page?(conflicts_path)}"     do %><i class="fa-solid fa-triangle-exclamation"></i> Interactions<% end %>
+        <%= link_to conflicts_path, class: "drawer-link #{'drawer-link--active' if current_page?(conflicts_path)}", data: { action: "click->page-loader#show" } do %><i class="fa-solid fa-triangle-exclamation"></i> Interactions<% end %>
         <%= link_to routines_path,      class: "drawer-link #{'drawer-link--active' if current_page?(routines_path)}"      do %><i class="fa-solid fa-clipboard-list"></i> Routines<% end %>
         <%= link_to chat_messages_path, class: "drawer-link #{'drawer-link--active' if current_page?(chat_messages_path)}" do %><i class="fa-solid fa-wand-magic-sparkles"></i> Assistant IA<% end %>
         <% if current_user.admin? %>

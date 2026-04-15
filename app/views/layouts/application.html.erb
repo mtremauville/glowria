@@ -21,7 +21,17 @@
     <%= stylesheet_link_tag "application" %>
     <%= javascript_importmap_tags %>
   </head>
-  <body>
+  <body data-controller="page-loader">
+
+    <%# ── Overlay de chargement (interactions) ── %>
+    <div class="page-loader" data-page-loader-target="overlay" hidden>
+      <div class="page-loader__box">
+        <div class="page-loader__spinner"></div>
+        <p class="page-loader__title">Analyse en cours…</p>
+        <p class="page-loader__sub">Glowria vérifie les interactions entre tes ingrédients.</p>
+      </div>
+    </div>
+
     <%= render "layouts/navbar" %>
     <% if notice.present? %>
       <div class="glow-toast glow-toast--success" role="alert">
