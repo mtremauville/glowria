@@ -10,7 +10,7 @@
     <p class="add-product-header__sub">Mets à jour les informations, la composition ou la photo.</p>
   </div>
 
-  <%= form_with url: product_path(@product), method: :patch, html: { multipart: true } do |f| %>
+  <%= form_with model: @product, html: { multipart: true } do |f| %>
 
     <%# ═══════════════════════════════════════════
         1. INFORMATIONS
