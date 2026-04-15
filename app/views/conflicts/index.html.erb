@@ -70,6 +70,14 @@
    BUTTONS
 ========================= */
 
+.conflicts-hero__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
 .conflicts-back-btn,
 .conflicts-primary-btn,
 .conflicts-secondary-btn {
@@ -108,6 +116,20 @@
 .conflicts-primary-btn:hover {
   transform: translateY(-2px);
   background: #1f1813;
+}
+
+.conflicts-primary-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.conflicts-primary-btn [data-conflict-checker-target="spinner"] {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 .conflicts-secondary-btn {
@@ -378,6 +400,12 @@
     align-items: flex-start;
   }
 
+  .conflicts-hero__actions {
+    align-items: flex-start;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
   .conflicts-grid {
     grid-template-columns: 1fr;
   }
@@ -445,10 +473,23 @@
         </p>
       </div>
 
-      <%= link_to root_path, class: "conflicts-back-btn" do %>
-        <i class="fa-solid fa-arrow-left"></i>
-        <span>Retour au dashboard</span>
-      <% end %>
+      <div class="conflicts-hero__actions" data-controller="conflict-checker">
+        <%= link_to conflicts_path,
+              class: "conflicts-primary-btn",
+              data: {
+                "conflict-checker-target": "btn",
+                action: "click->conflict-checker#check"
+              } do %>
+          <i class="fa-solid fa-rotate" data-conflict-checker-target="spinner" hidden></i>
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <span data-conflict-checker-target="label">Vérifier les interactions</span>
+        <% end %>
+
+        <%= link_to root_path, class: "conflicts-back-btn" do %>
+          <i class="fa-solid fa-arrow-left"></i>
+          <span>Retour au dashboard</span>
+        <% end %>
+      </div>
     </div>
 
     <% if @conflict_count == 0 %>
