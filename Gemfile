@@ -74,3 +74,4 @@ gem "friendly_id"       # slugs propres
 
 gem "redis"             # pour Action Cable
 gem "dotenv-rails", groups: [ :development, :test ]
+gem "cloudinary"        # stockage des images (Active Storage en production)
