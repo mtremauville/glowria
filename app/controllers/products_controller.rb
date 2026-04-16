@@ -1,7 +1,7 @@
 # app/controllers/products_controller.rb
 class ProductsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_product, only: [:edit, :update]
+  before_action :set_product, only: [:edit, :update, :purge_photo]
 
   def index
     @user_products = current_user.user_products
@@ -30,7 +30,11 @@ class ProductsController < ApplicationController
   def update
     ActiveRecord::Base.transaction do
       @product.update!(product_update_params)
-      @product.photo.attach(params.dig(:product, :photo)) if params.dig(:product, :photo).present?
+      if params.dig(:product, :remove_photo) == "1"
+        @product.photo.purge
+      elsif params.dig(:product, :photo).present?
+        @product.photo.attach(params.dig(:product, :photo))
+      end
       resync_ingredients if params[:ingredients_text].present?
     end
 
@@ -60,6 +64,11 @@ class ProductsController < ApplicationController
     end
   end
 
+  def purge_photo
+    @product.photo.purge
+    redirect_to product_path(@product), notice: "Photo supprimée."
+  end
+
   # POST /products/scan_composition (appelé par Stimulus via AJAX)
   def scan_composition
     unless params[:image].present?
@@ -84,7 +93,7 @@ class ProductsController < ApplicationController
   private
 
   def product_update_params
-    params.require(:product).permit(:name, :brand, :category, :description, :barcode)
+    params.require(:product).permit(:name, :brand, :category, :description, :barcode, :remove_photo)
   end
 
   def resync_ingredients
