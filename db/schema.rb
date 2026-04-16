@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_14_104853) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_16_082226) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -60,6 +60,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_14_104853) do
     t.bigint "ingredient_b_id", null: false
     t.string "message"
     t.string "recommendation"
+    t.string "rule_type", default: "conflict", null: false
     t.string "severity"
     t.datetime "updated_at", null: false
     t.index ["ingredient_a_id"], name: "index_conflict_rules_on_ingredient_a_id"

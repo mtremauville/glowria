@@ -112,6 +112,46 @@ PRODUCTS_DATA = [
       { name: "Acide Hyaluronique",inci_name: "Sodium Hyaluronate",     function: "Humectant",   benefits: "Hydratation zone sensible",               concerns: nil }
     ],
     usage_slot: "both"
+  },
+  # ── Produits ajoutés pour les interactions ─────────────────────────────
+  {
+    name:        "Peptide Complex Serum",
+    brand:       "The INKEY List",
+    category:    "Sérum",
+    barcode:     "0799891792476",
+    description: "Sérum peptides multi-action. Stimule la synthèse de collagène, lisse les rides et raffermit le teint en synergie avec le rétinol.",
+    image_url:   nil,
+    ingredients: [
+      { name: "Peptides",          inci_name: "Palmitoyl Tripeptide-1", function: "Anti-âge",    benefits: "Stimule le collagène, lisse les rides",    concerns: nil },
+      { name: "Acide Hyaluronique",inci_name: "Sodium Hyaluronate",     function: "Humectant",   benefits: "Hydratation et repulpage",                 concerns: nil }
+    ],
+    usage_slot: "evening"
+  },
+  {
+    name:        "Azelaic Acid Suspension 10%",
+    brand:       "The Ordinary",
+    category:    "Sérum",
+    barcode:     "0769915190563",
+    description: "Suspension d'acide azélaïque 10%. Unifie le teint, réduit rougeurs et imperfections, anti-inflammatoire doux.",
+    image_url:   nil,
+    ingredients: [
+      { name: "Acide Azélaïque",   inci_name: "Azelaic Acid",           function: "Unifiant",    benefits: "Réduit taches, rougeurs et imperfections", concerns: "Éviter avec AHA à forte dose" },
+      { name: "Zinc PCA",          inci_name: "Zinc PCA",               function: "Séborégulatuer", benefits: "Régule le sébum, resserre les pores",   concerns: nil }
+    ],
+    usage_slot: "morning"
+  },
+  {
+    name:        "Bakuchiol Serum",
+    brand:       "Bybi Beauty",
+    category:    "Sérum",
+    barcode:     "5060506121145",
+    description: "Sérum au bakuchiol, alternative botanique douce au rétinol. Compatible avec la vitamine C et les acides. Anti-âge sans irritation.",
+    image_url:   nil,
+    ingredients: [
+      { name: "Bakuchiol",         inci_name: "Bakuchiol",              function: "Anti-âge",    benefits: "Renouvellement cellulaire, anti-rides",    concerns: nil },
+      { name: "Vitamine E",        inci_name: "Tocopherol",             function: "Antioxydant", benefits: "Stabilise les actifs, protège la barrière", concerns: nil }
+    ],
+    usage_slot: "evening"
   }
 ].freeze
 

@@ -5,7 +5,17 @@ class ConflictAnalyzerService
   end
 
   def analyze
-    conflicts = []
+    scan_rules("conflict").sort_by { |c| severity_order(c[:severity]) }
+  end
+
+  def analyze_synergies
+    scan_rules("synergy").sort_by { |c| severity_order(c[:severity]) }
+  end
+
+  private
+
+  def scan_rules(rule_type)
+    results = []
     ingredients_by_product = build_ingredients_map
 
     ingredients_by_product.each do |up_id_a, ingredients_a|
@@ -14,10 +24,10 @@ class ConflictAnalyzerService
 
         ingredients_a.each do |ing_a|
           ingredients_b.each do |ing_b|
-            rule = find_conflict_rule(ing_a.id, ing_b.id)
+            rule = find_rule(ing_a.id, ing_b.id, rule_type)
             next unless rule
 
-            conflicts << {
+            results << {
               user_product_a: @user_products.find { |up| up.id == up_id_a },
               user_product_b: @user_products.find { |up| up.id == up_id_b },
               ingredient_a: ing_a,
@@ -31,10 +41,8 @@ class ConflictAnalyzerService
       end
     end
 
-    conflicts.sort_by { |c| severity_order(c[:severity]) }
+    results
   end
-
-  private
 
   def build_ingredients_map
     @user_products.each_with_object({}) do |up, map|
@@ -44,8 +52,8 @@ class ConflictAnalyzerService
     end
   end
 
-  def find_conflict_rule(id_a, id_b)
-    ConflictRule.where(
+  def find_rule(id_a, id_b, rule_type)
+    ConflictRule.where(rule_type: rule_type).where(
       "(ingredient_a_id = ? AND ingredient_b_id = ?) OR (ingredient_a_id = ? AND ingredient_b_id = ?)",
       id_a, id_b, id_b, id_a
     ).first
