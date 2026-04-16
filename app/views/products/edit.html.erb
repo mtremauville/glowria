@@ -78,6 +78,15 @@
           <div class="edit-current-photo">
             <%= image_tag @product.display_image, alt: @product.name, class: "edit-current-photo__img" %>
             <p class="edit-current-photo__label">Photo actuelle — prends-en une nouvelle pour la remplacer</p>
+            <% if @product.photo.attached? %>
+              <%= f.hidden_field :remove_photo, value: "0", data: { "photo-delete-target": "flag" } %>
+              <button type="button" class="edit-current-photo__delete"
+                      data-controller="photo-delete"
+                      data-action="click->photo-delete#confirm">
+                <i class="fa-solid fa-trash"></i>
+                Supprimer la photo
+              </button>
+            <% end %>
           </div>
         <% end %>
 

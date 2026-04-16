@@ -16,6 +16,13 @@
     <div class="prod-header__thumb">
       <% if @product.display_image %>
         <%= image_tag @product.display_image, alt: @product.name, class: "prod-header__img" %>
+        <% if @product.photo.attached? %>
+          <%= button_to purge_photo_product_path(@product), method: :delete,
+                data: { turbo_confirm: "Supprimer la photo de ce produit ?" },
+                class: "prod-header__photo-delete" do %>
+            <i class="fa-solid fa-trash"></i>
+          <% end %>
+        <% end %>
       <% else %>
         <i class="fa-solid fa-bottle-droplet prod-header__icon"></i>
       <% end %>

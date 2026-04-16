@@ -13,6 +13,7 @@ Rails.application.routes.draw do
   get "offline" => "pwa#offline", as: :pwa_offline
 
   resources :products, only: [:index, :show, :new, :create, :edit, :update] do
+    member     { delete :purge_photo }
     collection do
       get  :lookup
       post :scan_composition
