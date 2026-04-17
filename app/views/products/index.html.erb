@@ -10,9 +10,9 @@
           <%= @user_products.count %> produit<%= "s" if @user_products.count != 1 %> dans ta routine
         </p>
       </div>
-      <%= link_to new_product_path, class: "btn-glow btn-glow--primary btn-glow--sm align-self-start" do %>
+      <a href="<%= new_product_path %>" class="btn-glow btn-glow--primary btn-glow--sm align-self-start">
         <i class="fa-solid fa-plus"></i> Ajouter un produit
-      <% end %>
+      </a>
     </div>
   </div>
 
@@ -23,16 +23,12 @@
         <% molecules = up.product.product_ingredients.sort_by(&:position).map { |pi| [pi.ingredient.name, pi.ingredient.function] } %>
         <div class="product-row">
           <div class="product-row__main">
-            <% if up.product.display_image %>
-              <%= image_tag up.product.display_image, alt: up.product.name, class: "product-chip__img" %>
-            <% else %>
-              <div class="product-chip__placeholder"><i class="fa-solid fa-bottle-droplet"></i></div>
-            <% end %>
+            <%= product_chip_thumb_html(up.product) %>
 
-            <%= link_to product_path(up.product), class: "product-chip__info" do %>
+            <a href="<%= product_path(up.product) %>" class="product-chip__info">
               <span class="product-chip__name"><%= up.product.name %></span>
               <span class="product-chip__brand"><%= up.product.brand %><% if up.product.category.present? %> · <%= up.product.category %><% end %></span>
-            <% end %>
+            </a>
 
             <% slot_icons = { "morning" => "fa-sun", "evening" => "fa-moon", "both" => "fa-circle-half-stroke" } %>
             <% slot_labels = { "morning" => "Matin", "evening" => "Soir", "both" => "AM/PM" } %>
@@ -42,17 +38,16 @@
               <%= slot_labels.fetch(up.usage_slot.to_s, "AM/PM") %>
             </span>
 
-            <%= link_to edit_product_path(up.product),
-                  class: "btn-glow btn-glow--ghost btn-glow--sm" do %>
+            <a href="<%= edit_product_path(up.product) %>" class="btn-glow btn-glow--ghost btn-glow--sm">
               <i class="fa-solid fa-pen"></i>
-            <% end %>
+            </a>
 
-            <%= button_to user_product_path(up),
-                  method: :delete,
-                  class: "btn-glow btn-glow--ghost btn-glow--sm product-row__delete",
-                  data: { turbo_confirm: "Retirer #{up.product.name} de ta collection ?" } do %>
+            <a href="<%= user_product_path(up) %>"
+               data-turbo-method="delete"
+               data-turbo-confirm="Retirer <%= up.product.name %> de ta collection ?"
+               class="btn-glow btn-glow--ghost btn-glow--sm product-row__delete">
               <i class="fa-solid fa-xmark"></i>
-            <% end %>
+            </a>
           </div>
 
           <% if molecules.any? %>
@@ -73,9 +68,9 @@
         <span class="empty-state__icon"><i class="fa-solid fa-bottle-droplet"></i></span>
         <p class="empty-state__title">Ta collection est vide</p>
         <p class="empty-state__sub">Ajoute tes premiers produits pour commencer.</p>
-        <%= link_to new_product_path, class: "btn-glow btn-glow--primary btn-glow--sm" do %>
+        <a href="<%= new_product_path %>" class="btn-glow btn-glow--primary btn-glow--sm">
           <i class="fa-solid fa-plus"></i> Ajouter un produit
-        <% end %>
+        </a>
       </div>
     <% end %>
   </div>

@@ -39,6 +39,18 @@ module ApplicationHelper
     MOLECULE_PALETTE[name.to_s.sum % MOLECULE_PALETTE.size]
   end
 
+  # Avatar HTML for the navbar profile button (avoids conflicting linter rules)
+  def navbar_avatar_html(user)
+    if user.avatar.attached?
+      image_tag user.avatar.variant(resize_to_fill: [34, 34]),
+                class: "navbar-avatar-img", alt: ""
+    elsif user.display_name.present?
+      content_tag(:span, user.display_name[0].upcase, class: "navbar-avatar-initials")
+    else
+      content_tag(:i, nil, class: "fa-solid fa-circle-user")
+    end
+  end
+
   def slot_badge(slot)
     config = {
       "morning" => ["☀️", "Matin",  "warning"],

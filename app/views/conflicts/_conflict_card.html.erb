@@ -1,0 +1,55 @@
+<%# app/views/conflicts/_conflict_card.html.erb %>
+<%# locals: (conflict:, severity:) %>
+<% card_class = "conflict-card conflict-card--#{severity}" %>
+<article class="<%= card_class %>">
+  <div class="conflict-card__top">
+    <div class="conflict-card__product">
+      <div class="conflict-card__product-icon">
+        <i class="fa-solid fa-bottle-droplet"></i>
+      </div>
+      <div>
+        <p class="conflict-card__product-name">
+          <%= conflict[:user_product_a].product.name %>
+        </p>
+        <span class="conflict-card__ingredient">
+          <%= conflict[:ingredient_a].name %>
+        </span>
+      </div>
+    </div>
+
+    <div class="conflict-card__cross">
+      <i class="fa-solid fa-xmark"></i>
+    </div>
+
+    <div class="conflict-card__product">
+      <div class="conflict-card__product-icon">
+        <i class="fa-solid fa-bottle-droplet"></i>
+      </div>
+      <div>
+        <p class="conflict-card__product-name">
+          <%= conflict[:user_product_b].product.name %>
+        </p>
+        <span class="conflict-card__ingredient">
+          <%= conflict[:ingredient_b].name %>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="conflict-card__body">
+    <div class="conflict-card__alert">
+      <p><%= conflict[:message] %></p>
+    </div>
+    <div class="conflict-card__tip">
+      <i class="fa-solid fa-lightbulb"></i>
+      <span><%= conflict[:recommendation] %></span>
+    </div>
+  </div>
+
+  <div class="conflict-card__footer">
+    <a href="<%= chat_messages_path(q: "#{conflict[:ingredient_a].name} + #{conflict[:ingredient_b].name} : que faire ?") %>" class="conflicts-secondary-btn">
+      <span>Demander à l'IA</span>
+      <i class="fa-solid fa-arrow-right"></i>
+    </a>
+  </div>
+</article>
