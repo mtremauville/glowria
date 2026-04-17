@@ -93,7 +93,7 @@ class ProductsController < ApplicationController
   private
 
   def product_update_params
-    params.require(:product).permit(:name, :brand, :category, :description, :barcode, :remove_photo)
+    params.require(:product).permit(:name, :brand, :category, :description, :barcode)
   end
 
   def resync_ingredients
