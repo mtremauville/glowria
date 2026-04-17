@@ -74,12 +74,7 @@
 
       <div class="add-section__body" data-controller="photo-capture">
 
-        <% if @product.display_image %>
-          <div class="edit-current-photo">
-            <%= image_tag @product.display_image, alt: @product.name, class: "edit-current-photo__img" %>
-            <p class="edit-current-photo__label">Photo actuelle — prends-en une nouvelle pour la remplacer</p>
-          </div>
-        <% end %>
+        <%= product_current_photo_html(@product) %>
 
         <button type="button"
                 data-photo-capture-target="cameraBtn"

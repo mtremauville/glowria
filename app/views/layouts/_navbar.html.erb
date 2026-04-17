@@ -3,49 +3,42 @@
   <div class="navbar-inner">
 
     <%# ── Brand (lien vers accueil) ── %>
-    <%= link_to root_path, class: "navbar-brand" do %>
+    <a href="<%= root_path %>" class="navbar-brand">
       <i class="fa-solid fa-leaf navbar-brand__icon"></i>
       <span class="navbar-brand__name">Glowria</span>
-    <% end %>
+    </a>
 
     <% unless user_signed_in? %>
       <div class="navbar-actions">
-        <%= link_to new_user_session_path, class: "btn-glow btn-glow--ghost btn-glow--sm" do %>Se connecter<% end %>
-        <%= link_to new_user_registration_path, class: "btn-glow btn-glow--primary btn-glow--sm" do %>S'inscrire<% end %>
+        <a href="<%= new_user_session_path %>" class="btn-glow btn-glow--ghost btn-glow--sm">Se connecter</a>
+        <a href="<%= new_user_registration_path %>" class="btn-glow btn-glow--primary btn-glow--sm">S'inscrire</a>
       </div>
     <% end %>
 
     <% if user_signed_in? %>
       <%# ── Menu desktop ── %>
       <ul class="navbar-menu" id="navbar-menu">
-        <li><%= link_to dashboard_path, class: "navbar-link #{'navbar-link--active' if current_page?(dashboard_path)}" do %><i class="fa-solid fa-house"></i><span>Accueil</span><% end %></li>
-        <li><%= link_to products_path,      class: "navbar-link #{'navbar-link--active' if current_page?(products_path)}"      do %><i class="fa-solid fa-bottle-droplet"></i><span>Produits</span><% end %></li>
-        <li><%= link_to conflicts_path, class: "navbar-link #{'navbar-link--active' if current_page?(conflicts_path)}", data: { action: "click->page-loader#show" } do %><i class="fa-solid fa-triangle-exclamation"></i><span>Interactions</span><% end %></li>
-        <li><%= link_to routines_path,      class: "navbar-link #{'navbar-link--active' if current_page?(routines_path)}"      do %><i class="fa-solid fa-clipboard-list"></i><span>Routines</span><% end %></li>
-        <li><%= link_to chat_messages_path, class: "navbar-link #{'navbar-link--active' if current_page?(chat_messages_path)}" do %><i class="fa-solid fa-wand-magic-sparkles"></i><span>Assistant IA</span><% end %></li>
+        <li><a href="<%= dashboard_path %>" class="navbar-link <%= 'navbar-link--active' if current_page?(dashboard_path) %>"><i class="fa-solid fa-house"></i><span>Accueil</span></a></li>
+        <li><a href="<%= products_path %>" class="navbar-link <%= 'navbar-link--active' if current_page?(products_path) %>"><i class="fa-solid fa-bottle-droplet"></i><span>Produits</span></a></li>
+        <li><a href="<%= conflicts_path %>" class="navbar-link <%= 'navbar-link--active' if current_page?(conflicts_path) %>" data-action="click->page-loader#show"><i class="fa-solid fa-triangle-exclamation"></i><span>Interactions</span></a></li>
+        <li><a href="<%= routines_path %>" class="navbar-link <%= 'navbar-link--active' if current_page?(routines_path) %>"><i class="fa-solid fa-clipboard-list"></i><span>Routines</span></a></li>
+        <li><a href="<%= chat_messages_path %>" class="navbar-link <%= 'navbar-link--active' if current_page?(chat_messages_path) %>"><i class="fa-solid fa-wand-magic-sparkles"></i><span>Assistant IA</span></a></li>
         <% if current_user.admin? %>
-          <li><%= link_to admin_root_path, class: "navbar-link navbar-link--admin #{'navbar-link--active' if request.path.start_with?('/admin')}" do %><i class="fa-solid fa-shield-halved"></i><span>Admin</span><% end %></li>
+          <li><a href="<%= admin_root_path %>" class="navbar-link navbar-link--admin <%= 'navbar-link--active' if request.path.start_with?('/admin') %>"><i class="fa-solid fa-shield-halved"></i><span>Admin</span></a></li>
         <% end %>
       </ul>
 
       <%# ── Actions desktop ── %>
       <div class="navbar-actions">
-        <%= link_to new_product_path, class: "navbar-add-btn" do %>
+        <a href="<%= new_product_path %>" class="navbar-add-btn">
           <i class="fa-solid fa-plus"></i><span>Ajouter</span>
-        <% end %>
-        <%= link_to profile_path, class: "navbar-profile-btn #{'navbar-link--active' if current_page?(profile_path)}", title: "Mon profil" do %>
-          <% if current_user.avatar.attached? %>
-            <%= image_tag current_user.avatar.variant(resize_to_fill: [34, 34]),
-                  class: "navbar-avatar-img", alt: "" %>
-          <% elsif current_user.display_name.present? %>
-            <span class="navbar-avatar-initials"><%= current_user.display_name[0].upcase %></span>
-          <% else %>
-            <i class="fa-solid fa-circle-user"></i>
-          <% end %>
-        <% end %>
-        <%= link_to destroy_user_session_path, data: { turbo_method: :delete }, class: "navbar-signout", title: "Déconnexion" do %>
+        </a>
+        <a href="<%= profile_path %>" class="navbar-profile-btn <%= 'navbar-link--active' if current_page?(profile_path) %>" title="Mon profil">
+          <%= navbar_avatar_html(current_user) %>
+        </a>
+        <a href="<%= destroy_user_session_path %>" data-turbo-method="delete" class="navbar-signout" title="Déconnexion">
           <i class="fa-solid fa-right-from-bracket"></i>
-        <% end %>
+        </a>
       </div>
 
       <%# ── Burger (mobile uniquement) ── %>
@@ -60,24 +53,24 @@
   <% if user_signed_in? %>
     <div class="navbar-drawer" id="navbar-drawer">
       <div class="navbar-drawer__inner">
-        <%= link_to dashboard_path, class: "drawer-link #{'drawer-link--active' if current_page?(dashboard_path)}" do %><i class="fa-solid fa-house"></i> Accueil<% end %>
-        <%= link_to products_path,      class: "drawer-link #{'drawer-link--active' if current_page?(products_path)}"      do %><i class="fa-solid fa-bottle-droplet"></i> Produits<% end %>
-        <%= link_to conflicts_path, class: "drawer-link #{'drawer-link--active' if current_page?(conflicts_path)}", data: { action: "click->page-loader#show" } do %><i class="fa-solid fa-triangle-exclamation"></i> Interactions<% end %>
-        <%= link_to routines_path,      class: "drawer-link #{'drawer-link--active' if current_page?(routines_path)}"      do %><i class="fa-solid fa-clipboard-list"></i> Routines<% end %>
-        <%= link_to chat_messages_path, class: "drawer-link #{'drawer-link--active' if current_page?(chat_messages_path)}" do %><i class="fa-solid fa-wand-magic-sparkles"></i> Assistant IA<% end %>
+        <a href="<%= dashboard_path %>" class="drawer-link <%= 'drawer-link--active' if current_page?(dashboard_path) %>"><i class="fa-solid fa-house"></i> Accueil</a>
+        <a href="<%= products_path %>" class="drawer-link <%= 'drawer-link--active' if current_page?(products_path) %>"><i class="fa-solid fa-bottle-droplet"></i> Produits</a>
+        <a href="<%= conflicts_path %>" class="drawer-link <%= 'drawer-link--active' if current_page?(conflicts_path) %>" data-action="click->page-loader#show"><i class="fa-solid fa-triangle-exclamation"></i> Interactions</a>
+        <a href="<%= routines_path %>" class="drawer-link <%= 'drawer-link--active' if current_page?(routines_path) %>"><i class="fa-solid fa-clipboard-list"></i> Routines</a>
+        <a href="<%= chat_messages_path %>" class="drawer-link <%= 'drawer-link--active' if current_page?(chat_messages_path) %>"><i class="fa-solid fa-wand-magic-sparkles"></i> Assistant IA</a>
         <% if current_user.admin? %>
-          <%= link_to admin_root_path, class: "drawer-link drawer-link--admin #{'drawer-link--active' if request.path.start_with?('/admin')}" do %><i class="fa-solid fa-shield-halved"></i> Administration<% end %>
+          <a href="<%= admin_root_path %>" class="drawer-link drawer-link--admin <%= 'drawer-link--active' if request.path.start_with?('/admin') %>"><i class="fa-solid fa-shield-halved"></i> Administration</a>
         <% end %>
         <div class="drawer-divider"></div>
-        <%= link_to new_product_path, class: "drawer-link drawer-link--add" do %>
+        <a href="<%= new_product_path %>" class="drawer-link drawer-link--add">
           <i class="fa-solid fa-plus"></i> Ajouter un produit
-        <% end %>
-        <%= link_to profile_path, class: "drawer-link #{'drawer-link--active' if current_page?(profile_path)}" do %>
+        </a>
+        <a href="<%= profile_path %>" class="drawer-link <%= 'drawer-link--active' if current_page?(profile_path) %>">
           <i class="fa-solid fa-circle-user"></i> Mon profil
-        <% end %>
-        <%= link_to destroy_user_session_path, data: { turbo_method: :delete }, class: "drawer-link drawer-link--signout" do %>
+        </a>
+        <a href="<%= destroy_user_session_path %>" data-turbo-method="delete" class="drawer-link drawer-link--signout">
           <i class="fa-solid fa-right-from-bracket"></i> Déconnexion
-        <% end %>
+        </a>
       </div>
     </div>
 

@@ -526,27 +526,7 @@
     </div>
 
     <% if @conflict_count == 0 && @synergy_count == 0 %>
-
-      <!-- EMPTY STATE -->
-      <section class="conflicts-empty-card">
-        <div class="conflicts-empty-card__icon">
-          <i class="fa-solid fa-circle-check"></i>
-        </div>
-
-        <h2 class="conflicts-empty-card__title">
-          Aucun conflit détecté
-        </h2>
-
-        <p class="conflicts-empty-card__subtitle">
-          Excellente nouvelle : tous tes produits sont compatibles.
-          Ta routine est saine, cohérente et optimisée.
-        </p>
-
-        <%= link_to products_path, class: "conflicts-primary-btn" do %>
-          Voir ma collection
-        <% end %>
-      </section>
-
+      <%= render "empty_state" %>
     <% else %>
 
       <div class="conflicts-sections">
@@ -576,7 +556,9 @@
             <% cfg = conflict_config[severity] %>
 
             <section class="conflicts-section">
-              <div class="conflicts-section__header conflicts-section__header--<%= severity %>">
+              <% header_class = "conflicts-section__header conflicts-section__header--#{severity}" %>
+              <% badge_class  = "conflicts-badge conflicts-badge--#{severity}" %>
+              <div class="<%= header_class %>">
                 <div class="conflicts-section__icon">
                   <i class="fa-solid <%= cfg[:icon] %>"></i>
                 </div>
@@ -584,7 +566,7 @@
                 <div>
                   <div class="conflicts-section__title-row">
                     <h2 class="conflicts-section__title"><%= cfg[:label] %></h2>
-                    <span class="conflicts-badge conflicts-badge--<%= severity %>">
+                    <span class="<%= badge_class %>">
                       <%= @conflicts_by_severity[severity].count %>
                     </span>
                   </div>
@@ -594,59 +576,7 @@
 
               <div class="conflicts-grid">
                 <% @conflicts_by_severity[severity].each do |conflict| %>
-                  <article class="conflict-card conflict-card--<%= severity %>">
-                    <div class="conflict-card__top">
-                      <div class="conflict-card__product">
-                        <div class="conflict-card__product-icon">
-                          <i class="fa-solid fa-bottle-droplet"></i>
-                        </div>
-                        <div>
-                          <p class="conflict-card__product-name">
-                            <%= conflict[:user_product_a].product.name %>
-                          </p>
-                          <span class="conflict-card__ingredient">
-                            <%= conflict[:ingredient_a].name %>
-                          </span>
-                        </div>
-                      </div>
-
-                      <div class="conflict-card__cross">
-                        <i class="fa-solid fa-xmark"></i>
-                      </div>
-
-                      <div class="conflict-card__product">
-                        <div class="conflict-card__product-icon">
-                          <i class="fa-solid fa-bottle-droplet"></i>
-                        </div>
-                        <div>
-                          <p class="conflict-card__product-name">
-                            <%= conflict[:user_product_b].product.name %>
-                          </p>
-                          <span class="conflict-card__ingredient">
-                            <%= conflict[:ingredient_b].name %>
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="conflict-card__body">
-                      <div class="conflict-card__alert">
-                        <p><%= conflict[:message] %></p>
-                      </div>
-                      <div class="conflict-card__tip">
-                        <i class="fa-solid fa-lightbulb"></i>
-                        <span><%= conflict[:recommendation] %></span>
-                      </div>
-                    </div>
-
-                    <div class="conflict-card__footer">
-                      <% q = "#{conflict[:ingredient_a].name} + #{conflict[:ingredient_b].name} : que faire ?" %>
-                      <%= link_to chat_messages_path(q: q), class: "conflicts-secondary-btn" do %>
-                        <span>Demander à l’IA</span>
-                        <i class="fa-solid fa-arrow-right"></i>
-                      <% end %>
-                    </div>
-                  </article>
+                  <%= render "conflict_card", conflict: conflict, severity: severity %>
                 <% end %>
               </div>
             </section>
@@ -696,61 +626,7 @@
 
               <div class="conflicts-grid">
                 <% @synergies_by_severity[severity].each do |synergy| %>
-                  <article class="conflict-card conflict-card--synergy">
-                    <div class="conflict-card__top">
-                      <div class="conflict-card__product">
-                        <div class="conflict-card__product-icon">
-                          <i class="fa-solid fa-bottle-droplet"></i>
-                        </div>
-                        <div>
-                          <p class="conflict-card__product-name">
-                            <%= synergy[:user_product_a].product.name %>
-                          </p>
-                          <span class="conflict-card__ingredient">
-                            <%= synergy[:ingredient_a].name %>
-                          </span>
-                        </div>
-                      </div>
-
-                      <div class="conflict-card__cross conflict-card__cross--synergy">
-                        <i class="fa-solid fa-plus"></i>
-                      </div>
-
-                      <div class="conflict-card__product">
-                        <div class="conflict-card__product-icon">
-                          <i class="fa-solid fa-bottle-droplet"></i>
-                        </div>
-                        <div>
-                          <p class="conflict-card__product-name">
-                            <%= synergy[:user_product_b].product.name %>
-                          </p>
-                          <span class="conflict-card__ingredient">
-                            <%= synergy[:ingredient_b].name %>
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="conflict-card__body">
-                      <div class="conflict-card__alert">
-                        <p><%= synergy[:message] %></p>
-                      </div>
-                      <div class="conflict-card__tip conflict-card__tip--synergy">
-                        <i class="fa-solid fa-sparkles"></i>
-                        <span><%= synergy[:recommendation] %></span>
-                      </div>
-                    </div>
-
-                    <div class="conflict-card__footer">
-                      <%= link_to chat_messages_path(
-                            q: "#{synergy[:ingredient_a].name} + #{synergy[:ingredient_b].name} : comment optimiser ?"
-                          ),
-                          class: "conflicts-secondary-btn" do %>
-                        <span>Demander à l’IA</span>
-                        <i class="fa-solid fa-arrow-right"></i>
-                      <% end %>
-                    </div>
-                  </article>
+                  <%= render "synergy_card", synergy: synergy %>
                 <% end %>
               </div>
             </section>
