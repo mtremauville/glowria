@@ -3,6 +3,7 @@
 > **Intelligent ingredient conflict detection & personalized skincare routines powered by AI**
 
 **[🌐 Live Demo](https://glowria-13e2b2a157f6.herokuapp.com)** | **[📸 Screenshots](#screenshots)**
+
 <img src="https://github.com/mtremauville/glowria/blob/main/2.png" width= "25%">
 <img src="https://github.com/mtremauville/glowria/blob/main/3.png" width= "25%">
 <img src="https://github.com/mtremauville/glowria/blob/main/4.png" width= "25%">
