@@ -37,7 +37,7 @@ Glowria is a full-stack SaaS application that helps users understand their skinc
 | **AI** | Claude API (via ruby_llm) |
 | **Frontend** | Bootstrap 5, StimulusJS |
 | **Auth** | Devise + JWT |
-| **Deployment** | Docker, Heroku, Kamal |
+| **Deployment** | Heroku |
 | **Code Quality** | Rubocop, Standard |
 
 ---
