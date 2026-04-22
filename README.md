@@ -4,6 +4,11 @@
 
 **[🌐 Live Demo](https://glowria-13e2b2a157f6.herokuapp.com)** | **[📸 Screenshots](#screenshots)**
 
+<img src="https://github.com/mtremauville/glowria/blob/main/2.png" width= "25%">
+<img src="https://github.com/mtremauville/glowria/blob/main/3.png" width= "25%">
+<img src="https://github.com/mtremauville/glowria/blob/main/4.png" width= "25%">
+<img src="https://github.com/mtremauville/glowria/blob/main/5.png" width= "25%">
+
 ---
 
 ## 🎯 What is Glowria?
@@ -37,7 +42,7 @@ Glowria is a full-stack SaaS application that helps users understand their skinc
 | **AI** | Claude API (via ruby_llm) |
 | **Frontend** | Bootstrap 5, StimulusJS |
 | **Auth** | Devise + JWT |
-| **Deployment** | Docker, Heroku, Kamal |
+| **Deployment** | Heroku |
 | **Code Quality** | Rubocop, Standard |
 
 ---
