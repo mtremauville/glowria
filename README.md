@@ -239,4 +239,3 @@ Built by **Mickael** - Junior AI Software Developer
 ---
 
 **Star this repo if you like it!** ⭐
-
