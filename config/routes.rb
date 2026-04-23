@@ -35,5 +35,8 @@ Rails.application.routes.draw do
   get "/onboarding", to: "onboarding#show"
   patch "/onboarding", to: "onboarding#update"
 
-  
+  namespace :admin do
+    root to: "dashboard#index"
+    resources :users
+  end
 end

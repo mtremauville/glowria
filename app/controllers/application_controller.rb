@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
   def check_onboarding
     return unless user_signed_in?
     return if current_user.skin_type.present?
-    return if request.path.start_with?("/onboarding", "/users")
+    return if request.path.start_with?("/onboarding", "/users", "/admin")
 
     redirect_to onboarding_path
   end
