@@ -8,12 +8,21 @@ class Admin::DashboardController < Admin::BaseController
     @users              = User.order(created_at: :desc)
     @products_counts    = UserProduct.active.group(:user_id).count
 
-    @top_products = Product
-                      .joins(:user_products)
-                      .where(user_products: { active: true })
-                      .select("products.*, COUNT(user_products.id) AS users_count")
-                      .group("products.id")
-                      .order("users_count DESC")
-                      .limit(20)
+    top_product_ids = UserProduct.active
+                                   .group(:product_id)
+                                   .order("COUNT(*) DESC")
+                                   .limit(20)
+                                   .pluck(:product_id)
+
+    counts_by_product = UserProduct.active
+                                    .where(product_id: top_product_ids)
+                                    .group(:product_id)
+                                    .count
+
+    @top_products = Product.where(id: top_product_ids)
+                           .index_by(&:id)
+                           .values_at(*top_product_ids)
+                           .compact
+    @top_products_counts = counts_by_product
   end
 end
