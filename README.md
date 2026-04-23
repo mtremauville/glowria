@@ -233,7 +233,8 @@ MIT License - Feel free to use this for learning purposes.
 Built by **Mickael** - Junior AI Software Developer
 
 - 🔗 [LinkedIn](https://linkedin.com/in/mtremauville)
-- 🌐 [Portfolio](https://tremic.fr)
+- 🌐 [Portfolio](https://mtremauville.github.io/mtremauville)
+- 🌐 [Blog](https://tremic.fr)
 
 ---
 
