@@ -1,0 +1,97 @@
+<%# app/views/landing/index.html.erb %>
+
+<%# ══════════════════════════════════════════
+    HERO
+══════════════════════════════════════════ %>
+<section class="landing-hero">
+  <div class="landing-hero__bg"></div>
+  <div class="container landing-hero__content">
+    <div class="landing-hero__eyebrow">
+      <i class="fa-solid fa-leaf"></i> Skincare intelligente
+    </div>
+    <h1 class="landing-hero__title">
+      Ta routine <em>sur mesure</em>,<br>enfin simple.
+    </h1>
+    <p class="landing-hero__sub">
+      Glowria analyse ta collection de produits, détecte les interactions entre ingrédients et génère des routines personnalisées grâce à l'IA.
+    </p>
+    <div class="landing-hero__ctas">
+      <%= link_to new_user_registration_path, class: "db-cta-btn" do %>
+        <span class="db-cta-btn__icon">✨</span> Commencer gratuitement
+      <% end %>
+      <%= link_to new_user_session_path, class: "btn-glow btn-glow--ghost landing-hero__login" do %>
+        J'ai déjà un compte <i class="fa-solid fa-arrow-right"></i>
+      <% end %>
+    </div>
+  </div>
+</section>
+
+<%# ══════════════════════════════════════════
+    FEATURES
+══════════════════════════════════════════ %>
+<section class="container landing-features">
+
+  <div class="landing-feature">
+    <div class="landing-feature__icon">
+      <i class="fa-solid fa-barcode"></i>
+    </div>
+    <div>
+      <h3 class="landing-feature__title">Scanner, photographier ou saisir</h3>
+      <p class="landing-feature__desc">
+        Ajoute tes produits en scannant le code-barre, en photographiant la liste INCI ou en saisissant manuellement. La composition est extraite automatiquement.
+      </p>
+    </div>
+  </div>
+
+  <div class="landing-feature">
+    <div class="landing-feature__icon">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+    </div>
+    <div>
+      <h3 class="landing-feature__title">Détection des conflits d'ingrédients</h3>
+      <p class="landing-feature__desc">
+        Rétinol + Vitamine C, AHA + Niacinamide… Glowria identifie les combinaisons à éviter dans ta collection et t'alerte avant que tu ne les utilises ensemble.
+      </p>
+    </div>
+  </div>
+
+  <div class="landing-feature">
+    <div class="landing-feature__icon">
+      <i class="fa-solid fa-clipboard-list"></i>
+    </div>
+    <div>
+      <h3 class="landing-feature__title">Routines générées par l'IA</h3>
+      <p class="landing-feature__desc">
+        En un clic, l'IA compose ta routine matin et ta routine soir en tenant compte de ton type de peau, tes objectifs et les interactions entre produits.
+      </p>
+    </div>
+  </div>
+
+  <div class="landing-feature">
+    <div class="landing-feature__icon">
+      <i class="fa-solid fa-wand-magic-sparkles"></i>
+    </div>
+    <div>
+      <h3 class="landing-feature__title">Assistant skincare en temps réel</h3>
+      <p class="landing-feature__desc">
+        Pose tes questions sur tes produits, tes ingrédients ou tes préoccupations. L'assistant IA connaît ta collection et te répond avec précision.
+      </p>
+    </div>
+  </div>
+
+</section>
+
+<%# ══════════════════════════════════════════
+    CTA FINAL
+══════════════════════════════════════════ %>
+<section class="landing-cta">
+  <div class="landing-cta__bg"></div>
+  <div class="container landing-cta__content">
+    <p class="landing-cta__eyebrow"><i class="fa-solid fa-leaf"></i> Glowria</p>
+    <h2 class="landing-cta__title">Prête à prendre soin de ta peau ?</h2>
+    <p class="landing-cta__sub">Crée ton compte en 30 secondes, ajoute tes produits et laisse l'IA faire le reste.</p>
+    <%= link_to new_user_registration_path, class: "db-cta-btn" do %>
+      <span class="db-cta-btn__icon">✨</span> Créer mon compte
+    <% end %>
+  </div>
+</section>

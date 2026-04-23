@@ -8,10 +8,17 @@
       <span class="navbar-brand__name">Glowria</span>
     <% end %>
 
+    <% unless user_signed_in? %>
+      <div class="navbar-actions">
+        <%= link_to new_user_session_path, class: "btn-glow btn-glow--ghost btn-glow--sm" do %>Se connecter<% end %>
+        <%= link_to new_user_registration_path, class: "btn-glow btn-glow--primary btn-glow--sm" do %>S'inscrire<% end %>
+      </div>
+    <% end %>
+
     <% if user_signed_in? %>
       <%# ── Menu desktop ── %>
       <ul class="navbar-menu" id="navbar-menu">
-        <li><%= link_to root_path,          class: "navbar-link #{'navbar-link--active' if current_page?(root_path)}"          do %><i class="fa-solid fa-house"></i><span>Accueil</span><% end %></li>
+        <li><%= link_to dashboard_path, class: "navbar-link #{'navbar-link--active' if current_page?(dashboard_path)}" do %><i class="fa-solid fa-house"></i><span>Accueil</span><% end %></li>
         <li><%= link_to products_path,      class: "navbar-link #{'navbar-link--active' if current_page?(products_path)}"      do %><i class="fa-solid fa-bottle-droplet"></i><span>Produits</span><% end %></li>
         <li><%= link_to conflicts_path,     class: "navbar-link #{'navbar-link--active' if current_page?(conflicts_path)}"     do %><i class="fa-solid fa-triangle-exclamation"></i><span>Interactions</span><% end %></li>
         <li><%= link_to routines_path,      class: "navbar-link #{'navbar-link--active' if current_page?(routines_path)}"      do %><i class="fa-solid fa-clipboard-list"></i><span>Routines</span><% end %></li>
@@ -53,7 +60,7 @@
   <% if user_signed_in? %>
     <div class="navbar-drawer" id="navbar-drawer">
       <div class="navbar-drawer__inner">
-        <%= link_to root_path,          class: "drawer-link #{'drawer-link--active' if current_page?(root_path)}"          do %><i class="fa-solid fa-house"></i> Accueil<% end %>
+        <%= link_to dashboard_path, class: "drawer-link #{'drawer-link--active' if current_page?(dashboard_path)}" do %><i class="fa-solid fa-house"></i> Accueil<% end %>
         <%= link_to products_path,      class: "drawer-link #{'drawer-link--active' if current_page?(products_path)}"      do %><i class="fa-solid fa-bottle-droplet"></i> Produits<% end %>
         <%= link_to conflicts_path,     class: "drawer-link #{'drawer-link--active' if current_page?(conflicts_path)}"     do %><i class="fa-solid fa-triangle-exclamation"></i> Interactions<% end %>
         <%= link_to routines_path,      class: "drawer-link #{'drawer-link--active' if current_page?(routines_path)}"      do %><i class="fa-solid fa-clipboard-list"></i> Routines<% end %>
