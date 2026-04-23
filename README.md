@@ -29,8 +29,7 @@ Glowria is a full-stack SaaS application that helps users understand their skinc
 - 🧴 **Ingredient Database** - Comprehensive database of skincare actives and their properties
 - 👤 **User Accounts** - Secure authentication with Devise + JWT
 - 📱 **Mobile-Friendly** - Responsive design for all devices
-- 🌙 **Production-Ready** - Deployed on Heroku with Docker containerization
-
+- 🌙 **Production-Ready** - Deployed on Heroku
 ---
 
 ## 🛠️ Tech Stack
