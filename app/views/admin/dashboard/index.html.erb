@@ -1,158 +1,163 @@
 <%# app/views/admin/dashboard/index.html.erb %>
-<div class="container" style="max-width: 1000px">
 
-  <%# ── Header ── %>
-  <div class="admin-header">
-    <div>
-      <span class="admin-badge"><i class="fa-solid fa-shield-halved"></i> Administration</span>
-      <h1 class="admin-header__title">Tableau de bord</h1>
-    </div>
-    <%= link_to new_admin_user_path, class: "btn-glow btn-glow--primary btn-glow--sm" do %>
-      <i class="fa-solid fa-user-plus"></i> Nouvel utilisateur
-    <% end %>
-  </div>
-
-  <%# ── Stats ── %>
-  <div class="admin-stats">
-    <div class="admin-stat">
-      <span class="admin-stat__icon"><i class="fa-solid fa-users"></i></span>
-      <div>
-        <span class="admin-stat__value"><%= @users_count %></span>
-        <span class="admin-stat__label">Utilisateurs</span>
+<%# ══════════════════════════════════════════
+    HERO
+══════════════════════════════════════════ %>
+<section class="db-hero db-hero--admin">
+  <div class="db-hero__bg"></div>
+  <div class="db-hero__content container">
+    <div class="db-hero__left">
+      <p class="db-hero__eyebrow"><i class="fa-solid fa-shield-halved"></i> Administration</p>
+      <h1 class="db-hero__title">Tableau de bord</h1>
+      <div class="db-hero__meta">
+        <span class="db-meta-chip">
+          <i class="fa-solid fa-users"></i> <%= @users_count %> utilisateur<%= "s" if @users_count != 1 %>
+        </span>
+        <span class="db-meta-chip">
+          <i class="fa-solid fa-bottle-droplet"></i> <%= @products_count %> produit<%= "s" if @products_count != 1 %>
+        </span>
+        <span class="db-meta-chip">
+          <i class="fa-solid fa-heart"></i> <%= @user_products_count %> collection<%= "s" if @user_products_count != 1 %>
+        </span>
       </div>
     </div>
-    <div class="admin-stat">
-      <span class="admin-stat__icon"><i class="fa-solid fa-bottle-droplet"></i></span>
-      <div>
-        <span class="admin-stat__value"><%= @products_count %></span>
-        <span class="admin-stat__label">Produits utilisés</span>
-      </div>
-    </div>
-    <div class="admin-stat">
-      <span class="admin-stat__icon"><i class="fa-solid fa-heart"></i></span>
-      <div>
-        <span class="admin-stat__value"><%= @user_products_count %></span>
-        <span class="admin-stat__label">Ajouts en collection</span>
-      </div>
-    </div>
-  </div>
-
-  <%# ── Utilisateurs ── %>
-  <div class="glow-card" style="margin-bottom: 2rem">
-    <div class="glow-card__header">
-      <h2 class="glow-card__title"><i class="fa-solid fa-users"></i> Utilisateurs</h2>
-      <%= link_to admin_users_path, class: "btn-glow btn-glow--ghost btn-glow--sm" do %>
-        Voir tout <i class="fa-solid fa-arrow-right"></i>
+    <div class="db-hero__actions">
+      <%= link_to new_admin_user_path, class: "db-cta-btn" do %>
+        <span class="db-cta-btn__icon">＋</span> Nouvel utilisateur
       <% end %>
     </div>
-
-    <% if @users.any? %>
-      <div class="admin-table-wrap">
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>Nom / Email</th>
-              <th>Produits</th>
-              <th>Admin</th>
-              <th>Inscrit le</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <% @users.each do |user| %>
-              <tr>
-                <td>
-                  <div class="admin-user-cell">
-                    <% if user.avatar.attached? %>
-                      <%= image_tag user.avatar.variant(resize_to_fill: [32, 32]), class: "admin-avatar", alt: "" %>
-                    <% else %>
-                      <span class="admin-avatar admin-avatar--initials">
-                        <%= (user.display_name.presence || user.email)[0].upcase %>
-                      </span>
-                    <% end %>
-                    <div>
-                      <% if user.display_name.present? %>
-                        <span class="admin-user-cell__name"><%= user.display_name %></span>
-                      <% end %>
-                      <span class="admin-user-cell__email"><%= user.email %></span>
-                    </div>
-                  </div>
-                </td>
-                <td><span class="admin-count"><%= @products_counts[user.id].to_i %></span></td>
-                <td>
-                  <% if user.admin? %>
-                    <span class="admin-badge admin-badge--sm"><i class="fa-solid fa-shield-halved"></i> Admin</span>
-                  <% end %>
-                </td>
-                <td class="admin-date"><%= user.created_at.strftime("%d/%m/%Y") %></td>
-                <td>
-                  <div class="admin-row-actions">
-                    <%= link_to edit_admin_user_path(user), class: "btn-glow btn-glow--ghost btn-glow--sm" do %>
-                      <i class="fa-solid fa-pen"></i>
-                    <% end %>
-                    <% unless user == current_user %>
-                      <%= button_to admin_user_path(user), method: :delete, class: "btn-glow btn-glow--ghost btn-glow--sm admin-btn-delete",
-                            data: { turbo_confirm: "Supprimer le compte de #{user.email} ?" } do %>
-                        <i class="fa-solid fa-xmark"></i>
-                      <% end %>
-                    <% end %>
-                  </div>
-                </td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
-    <% else %>
-      <div class="empty-state">
-        <span class="empty-state__icon"><i class="fa-solid fa-users"></i></span>
-        <p class="empty-state__title">Aucun utilisateur</p>
-      </div>
-    <% end %>
   </div>
 
-  <%# ── Produits utilisés ── %>
-  <div class="glow-card">
-    <div class="glow-card__header">
-      <h2 class="glow-card__title"><i class="fa-solid fa-bottle-droplet"></i> Produits les plus utilisés</h2>
+  <div class="db-stats container">
+    <div class="db-stat">
+      <span class="db-stat__value"><%= @users_count %></span>
+      <span class="db-stat__label">Utilisateurs</span>
+    </div>
+    <div class="db-stat__divider"></div>
+    <div class="db-stat">
+      <span class="db-stat__value"><%= @products_count %></span>
+      <span class="db-stat__label">Produits actifs</span>
+    </div>
+    <div class="db-stat__divider"></div>
+    <div class="db-stat">
+      <span class="db-stat__value"><%= @user_products_count %></span>
+      <span class="db-stat__label">Ajouts en collection</span>
+    </div>
+    <div class="db-stat__divider"></div>
+    <div class="db-stat">
+      <span class="db-stat__value"><%= @users.count { |u| u.admin? } %></span>
+      <span class="db-stat__label">Admins</span>
+    </div>
+  </div>
+</section>
+
+<div class="container db-body">
+
+  <%# ══════════════════════════════════════════
+      UTILISATEURS
+  ══════════════════════════════════════════ %>
+  <div class="db-section">
+    <div class="db-section__header">
+      <h2 class="db-section__title">Utilisateurs</h2>
+      <%= link_to admin_users_path, class: "db-section__link" do %>Gérer tout →<% end %>
+    </div>
+
+    <div class="glow-card">
+      <% if @users.any? %>
+        <% @users.each do |user| %>
+          <div class="product-row">
+            <div class="product-row__main">
+
+              <% if user.avatar.attached? %>
+                <%= image_tag user.avatar.variant(resize_to_fill: [40, 40]), class: "product-chip__img", alt: "" %>
+              <% else %>
+                <div class="product-chip__placeholder" style="font-size:.85rem;font-weight:600;">
+                  <%= (user.display_name.presence || user.email)[0].upcase %>
+                </div>
+              <% end %>
+
+              <div class="product-chip__info">
+                <span class="product-chip__name">
+                  <%= user.display_name.presence || user.email.split("@").first.capitalize %>
+                  <% if user.admin? %>
+                    <span class="admin-badge admin-badge--sm" style="margin-left:.4rem"><i class="fa-solid fa-shield-halved"></i> Admin</span>
+                  <% end %>
+                </span>
+                <span class="product-chip__brand"><%= user.email %></span>
+              </div>
+
+              <span class="slot-pill slot-pill--both" style="flex-shrink:0">
+                <i class="fa-solid fa-bottle-droplet"></i>
+                <%= @products_counts[user.id].to_i %>
+              </span>
+
+              <span class="product-chip__brand" style="font-size:.75rem;color:var(--text-light);flex-shrink:0">
+                <%= user.created_at.strftime("%d/%m/%Y") %>
+              </span>
+
+              <%= link_to edit_admin_user_path(user), class: "btn-glow btn-glow--ghost btn-glow--sm" do %>
+                <i class="fa-solid fa-pen"></i>
+              <% end %>
+
+              <% unless user == current_user %>
+                <%= button_to admin_user_path(user), method: :delete,
+                      class: "btn-glow btn-glow--ghost btn-glow--sm product-row__delete",
+                      data: { turbo_confirm: "Supprimer le compte de #{user.email} ?" } do %>
+                  <i class="fa-solid fa-xmark"></i>
+                <% end %>
+              <% end %>
+
+            </div>
+          </div>
+        <% end %>
+      <% else %>
+        <div class="empty-state">
+          <span class="empty-state__icon"><i class="fa-solid fa-users"></i></span>
+          <p class="empty-state__title">Aucun utilisateur</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <%# ══════════════════════════════════════════
+      PRODUITS LES PLUS UTILISÉS
+  ══════════════════════════════════════════ %>
+  <div class="db-section">
+    <div class="db-section__header">
+      <h2 class="db-section__title">Produits les plus utilisés</h2>
     </div>
 
     <% if @top_products.any? %>
-      <div class="admin-table-wrap">
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>Produit</th>
-              <th>Marque</th>
-              <th>Catégorie</th>
-              <th>Utilisateurs</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% @top_products.each do |product| %>
-              <tr>
-                <td>
-                  <div class="admin-product-cell">
-                    <% if product.display_image %>
-                      <%= image_tag product.display_image, class: "admin-product-img", alt: "" %>
-                    <% else %>
-                      <span class="admin-product-img admin-product-img--placeholder"><i class="fa-solid fa-bottle-droplet"></i></span>
-                    <% end %>
-                    <%= link_to product.name, product_path(product), class: "admin-product-cell__name" %>
-                  </div>
-                </td>
-                <td class="admin-muted"><%= product.brand %></td>
-                <td><% if product.category.present? %><span class="prod-header__category"><%= product.category %></span><% end %></td>
-                <td><span class="admin-count"><%= product.users_count %></span></td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
+      <div class="db-products">
+        <% @top_products.first(6).each do |product| %>
+          <%= link_to product_path(product), class: "db-product-card" do %>
+            <div class="db-product-card__thumb">
+              <% if product.display_image %>
+                <%= image_tag product.display_image, alt: product.name %>
+              <% else %>
+                <span class="db-product-card__emoji"><i class="fa-solid fa-bottle-droplet"></i></span>
+              <% end %>
+            </div>
+            <span class="slot-pill slot-pill--both db-product-card__slot">
+              <i class="fa-solid fa-users"></i> <%= product.users_count %>
+            </span>
+            <div class="db-product-card__info">
+              <p class="db-product-card__name"><%= product.name %></p>
+              <p class="db-product-card__brand"><%= product.brand %></p>
+            </div>
+          <% end %>
+        <% end %>
+        <% if @top_products.size > 6 %>
+          <div class="db-product-card db-product-card--more">
+            <span class="db-product-card__more-count">+<%= @top_products.size - 6 %></span>
+            <span class="db-product-card__more-label">produits</span>
+          </div>
+        <% end %>
       </div>
     <% else %>
-      <div class="empty-state">
-        <span class="empty-state__icon"><i class="fa-solid fa-bottle-droplet"></i></span>
-        <p class="empty-state__title">Aucun produit utilisé</p>
+      <div class="db-empty">
+        <div class="db-empty__icon"><i class="fa-solid fa-bottle-droplet"></i></div>
+        <p class="db-empty__title">Aucun produit en collection</p>
       </div>
     <% end %>
   </div>
