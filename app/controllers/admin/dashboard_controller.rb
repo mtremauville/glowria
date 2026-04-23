@@ -10,7 +10,7 @@ class Admin::DashboardController < Admin::BaseController
 
     top_product_ids = UserProduct.active
                                    .group(:product_id)
-                                   .order("COUNT(*) DESC")
+                                   .order(Arel.sql("COUNT(*) DESC"))
                                    .limit(20)
                                    .pluck(:product_id)
 
