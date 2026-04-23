@@ -1,89 +1,94 @@
 <%# app/views/admin/users/index.html.erb %>
-<div class="container" style="max-width: 1000px">
 
-  <div class="admin-header">
-    <div>
-      <span class="admin-badge"><i class="fa-solid fa-shield-halved"></i> Administration</span>
-      <h1 class="admin-header__title">Utilisateurs</h1>
-      <p class="admin-header__sub"><%= @users.count %> compte<%= "s" if @users.count != 1 %></p>
+<%# ── Hero ── %>
+<section class="db-hero db-hero--admin">
+  <div class="db-hero__bg"></div>
+  <div class="db-hero__content container">
+    <div class="db-hero__left">
+      <p class="db-hero__eyebrow"><i class="fa-solid fa-shield-halved"></i> Administration</p>
+      <h1 class="db-hero__title">Utilisateurs</h1>
+      <div class="db-hero__meta">
+        <span class="db-meta-chip">
+          <i class="fa-solid fa-users"></i> <%= @users.count %> compte<%= "s" if @users.count != 1 %>
+        </span>
+        <span class="db-meta-chip">
+          <i class="fa-solid fa-shield-halved"></i> <%= @users.count(&:admin?) %> admin<%= "s" if @users.count(&:admin?) != 1 %>
+        </span>
+      </div>
     </div>
-    <div class="d-flex gap-2">
-      <%= link_to admin_root_path, class: "btn-glow btn-glow--ghost btn-glow--sm" do %>
-        <i class="fa-solid fa-arrow-left"></i> Dashboard
-      <% end %>
-      <%= link_to new_admin_user_path, class: "btn-glow btn-glow--primary btn-glow--sm" do %>
-        <i class="fa-solid fa-user-plus"></i> Nouvel utilisateur
+    <div class="db-hero__actions">
+      <%= link_to new_admin_user_path, class: "db-cta-btn" do %>
+        <span class="db-cta-btn__icon">＋</span> Nouvel utilisateur
       <% end %>
     </div>
   </div>
+</section>
 
-  <div class="glow-card">
-    <% if @users.any? %>
-      <div class="admin-table-wrap">
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>Nom / Email</th>
-              <th>Produits actifs</th>
-              <th>Admin</th>
-              <th>Inscrit le</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <% @users.each do |user| %>
-              <tr>
-                <td>
-                  <div class="admin-user-cell">
-                    <% if user.avatar.attached? %>
-                      <%= image_tag user.avatar.variant(resize_to_fill: [32, 32]), class: "admin-avatar", alt: "" %>
-                    <% else %>
-                      <span class="admin-avatar admin-avatar--initials">
-                        <%= (user.display_name.presence || user.email)[0].upcase %>
-                      </span>
-                    <% end %>
-                    <div>
-                      <% if user.display_name.present? %>
-                        <span class="admin-user-cell__name"><%= user.display_name %></span>
-                      <% end %>
-                      <span class="admin-user-cell__email"><%= user.email %></span>
-                    </div>
-                  </div>
-                </td>
-                <td><span class="admin-count"><%= @products_counts[user.id].to_i %></span></td>
-                <td>
+<div class="container db-body">
+  <div class="db-section">
+    <div class="db-section__header">
+      <h2 class="db-section__title">Tous les comptes</h2>
+      <%= link_to admin_root_path, class: "db-section__link" do %>← Dashboard<% end %>
+    </div>
+
+    <div class="glow-card">
+      <% if @users.any? %>
+        <% @users.each do |user| %>
+          <div class="product-row">
+            <div class="product-row__main">
+
+              <% if user.avatar.attached? %>
+                <%= image_tag user.avatar.variant(resize_to_fill: [40, 40]), class: "product-chip__img", alt: "" %>
+              <% else %>
+                <div class="product-chip__placeholder" style="font-size:.85rem;font-weight:600;">
+                  <%= (user.display_name.presence || user.email)[0].upcase %>
+                </div>
+              <% end %>
+
+              <div class="product-chip__info">
+                <span class="product-chip__name">
+                  <%= user.display_name.presence || user.email.split("@").first.capitalize %>
                   <% if user.admin? %>
-                    <span class="admin-badge admin-badge--sm"><i class="fa-solid fa-shield-halved"></i> Admin</span>
+                    <span class="admin-badge admin-badge--sm" style="margin-left:.4rem">
+                      <i class="fa-solid fa-shield-halved"></i> Admin
+                    </span>
                   <% end %>
-                </td>
-                <td class="admin-date"><%= user.created_at.strftime("%d/%m/%Y") %></td>
-                <td>
-                  <div class="admin-row-actions">
-                    <%= link_to edit_admin_user_path(user), class: "btn-glow btn-glow--ghost btn-glow--sm" do %>
-                      <i class="fa-solid fa-pen"></i> Modifier
-                    <% end %>
-                    <% unless user == current_user %>
-                      <%= button_to admin_user_path(user), method: :delete, class: "btn-glow btn-glow--ghost btn-glow--sm admin-btn-delete",
-                            data: { turbo_confirm: "Supprimer le compte de #{user.email} ? Cette action est irréversible." } do %>
-                        <i class="fa-solid fa-trash"></i> Supprimer
-                      <% end %>
-                    <% end %>
-                  </div>
-                </td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
-    <% else %>
-      <div class="empty-state">
-        <span class="empty-state__icon"><i class="fa-solid fa-users"></i></span>
-        <p class="empty-state__title">Aucun utilisateur</p>
-        <%= link_to new_admin_user_path, class: "btn-glow btn-glow--primary btn-glow--sm" do %>
-          <i class="fa-solid fa-user-plus"></i> Créer le premier utilisateur
-        <% end %>
-      </div>
-    <% end %>
-  </div>
+                </span>
+                <span class="product-chip__brand"><%= user.email %></span>
+              </div>
 
+              <span class="slot-pill slot-pill--both" style="flex-shrink:0" title="Produits actifs">
+                <i class="fa-solid fa-bottle-droplet"></i> <%= @products_counts[user.id].to_i %>
+              </span>
+
+              <span style="font-size:.75rem;color:var(--text-light);flex-shrink:0;white-space:nowrap;">
+                <i class="fa-regular fa-calendar"></i> <%= user.created_at.strftime("%d/%m/%Y") %>
+              </span>
+
+              <%= link_to edit_admin_user_path(user), class: "btn-glow btn-glow--ghost btn-glow--sm" do %>
+                <i class="fa-solid fa-pen"></i> Modifier
+              <% end %>
+
+              <% unless user == current_user %>
+                <%= button_to admin_user_path(user), method: :delete,
+                      class: "btn-glow btn-glow--ghost btn-glow--sm product-row__delete",
+                      data: { turbo_confirm: "Supprimer le compte de #{user.email} ? Cette action est irréversible." } do %>
+                  <i class="fa-solid fa-trash"></i>
+                <% end %>
+              <% end %>
+
+            </div>
+          </div>
+        <% end %>
+      <% else %>
+        <div class="empty-state">
+          <span class="empty-state__icon"><i class="fa-solid fa-users"></i></span>
+          <p class="empty-state__title">Aucun utilisateur</p>
+          <%= link_to new_admin_user_path, class: "btn-glow btn-glow--primary btn-glow--sm" do %>
+            <i class="fa-solid fa-user-plus"></i> Créer le premier utilisateur
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
 </div>
