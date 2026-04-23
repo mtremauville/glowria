@@ -1,0 +1,84 @@
+<%# app/views/admin/users/_form.html.erb %>
+<%= form_with model: [:admin, user], html: { class: "admin-form" } do |f| %>
+
+  <% if user.errors.any? %>
+    <div class="glow-toast glow-toast--error" style="position:static; margin-bottom:1.5rem">
+      <span class="glow-toast__icon"><i class="fa-solid fa-circle-exclamation"></i></span>
+      <ul style="margin:0; padding-left:1rem">
+        <% user.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="add-section">
+    <div class="add-section__header">
+      <div class="add-section__label"><i class="fa-solid fa-circle-user"></i> Informations</div>
+    </div>
+    <div class="add-section__body">
+
+      <div class="add-form-group">
+        <%= f.label :display_name, "Nom affiché", class: "add-form-label" %>
+        <%= f.text_field :display_name, class: "add-form-input", placeholder: "ex : Marie Dupont" %>
+      </div>
+
+      <div class="add-form-group">
+        <%= f.label :email, "Email", class: "add-form-label" %>
+        <%= f.email_field :email, class: "add-form-input", placeholder: "email@exemple.com", autocomplete: "off" %>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="add-section">
+    <div class="add-section__header">
+      <div class="add-section__label"><i class="fa-solid fa-lock"></i> Mot de passe</div>
+    </div>
+    <div class="add-section__body">
+
+      <% if user.persisted? %>
+        <p class="edit-ingredients-hint">
+          <i class="fa-solid fa-circle-info"></i>
+          Laisse vide pour ne pas modifier le mot de passe.
+        </p>
+      <% end %>
+
+      <div class="add-form-group">
+        <%= f.label :password, user.persisted? ? "Nouveau mot de passe" : "Mot de passe", class: "add-form-label" %>
+        <%= f.password_field :password, class: "add-form-input", autocomplete: "new-password",
+              placeholder: user.persisted? ? "Laisser vide pour ne pas changer" : "Minimum 6 caractères" %>
+      </div>
+
+      <div class="add-form-group">
+        <%= f.label :password_confirmation, "Confirmer le mot de passe", class: "add-form-label" %>
+        <%= f.password_field :password_confirmation, class: "add-form-input", autocomplete: "new-password" %>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="add-section">
+    <div class="add-section__header">
+      <div class="add-section__label"><i class="fa-solid fa-shield-halved"></i> Rôle</div>
+    </div>
+    <div class="add-section__body">
+      <label class="admin-toggle-label">
+        <%= f.check_box :admin, class: "admin-toggle-input" %>
+        <span class="admin-toggle-track"></span>
+        <span class="admin-toggle-text">Administrateur</span>
+      </label>
+      <p class="edit-ingredients-hint" style="margin-top: .5rem">
+        <i class="fa-solid fa-circle-info"></i>
+        Un administrateur a accès au panneau d'administration.
+      </p>
+    </div>
+  </div>
+
+  <div class="edit-actions">
+    <%= f.submit user.persisted? ? "Enregistrer les modifications" : "Créer le compte",
+          class: "add-submit-btn" %>
+    <%= link_to "Annuler", admin_users_path, class: "edit-cancel-btn" %>
+  </div>
+
+<% end %>

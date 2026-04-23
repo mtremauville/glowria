@@ -1,0 +1,16 @@
+<%# app/views/admin/users/new.html.erb %>
+<div class="container" style="max-width: 560px">
+
+  <div class="admin-header">
+    <div>
+      <span class="admin-badge"><i class="fa-solid fa-shield-halved"></i> Administration</span>
+      <h1 class="admin-header__title">Nouvel utilisateur</h1>
+    </div>
+    <%= link_to admin_users_path, class: "btn-glow btn-glow--ghost btn-glow--sm" do %>
+      <i class="fa-solid fa-arrow-left"></i> Retour
+    <% end %>
+  </div>
+
+  <%= render "form", user: @user %>
+
+</div>
